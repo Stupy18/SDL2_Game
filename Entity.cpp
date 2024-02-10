@@ -21,4 +21,8 @@ SDL_Rect& Entity::get_currentFrame() {
     return currentFrame;
 }
 
+void Entity::setFrameSize(int width, int height) {
+    currentFrame.w = width;
+    currentFrame.h = height;
+}
 

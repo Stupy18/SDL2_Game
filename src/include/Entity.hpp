@@ -33,5 +33,14 @@ public:
         return points;
     }
 
+    void setY(float p_val)
+    {
+        pos.y=p_val;
+    }
+    void setX(float p_val)
+    {
+        pos.x=p_val;
+    }
 
+    void setFrameSize(int width, int height);
 };

@@ -31,10 +31,10 @@ int main( int argc,char* args[]) {
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/background.jpg");
-    SDL_Texture* playerTexture = window.loadTexture("src/res/images/character.png");
+    SDL_Texture* playerTexture = window.loadTexture("src/res/images/character2.png");
 
     Background background= Background(backgroundTexture, 1280,720);
-    Player player(Vector2f(100, 107), playerTexture, 1,WIDTH,HEIGHT);
+    Player player(Vector2f(100, 0), playerTexture, 1, WIDTH, HEIGHT);
 
     std::vector<Entity> entities = {
                             Entity(Vector2f(0,130),grassTexture1),

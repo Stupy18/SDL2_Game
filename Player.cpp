@@ -4,8 +4,11 @@
 
 Player::Player(Vector2f p_pos, SDL_Texture* p_texture, int p_speed, int screenWidth, int screenHeight)
     : Entity(p_pos, p_texture), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
-      isJumping(false), jumpSpeed(1.37f), originalYPos(p_pos.y), currentJumpHeight(0.0f),
-      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(0.5f) {}
+      isJumping(false), jumpSpeed(2), originalYPos(p_pos.y), currentJumpHeight(0.0f),
+      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(0.90f)
+       {
+        setFrameSize(20, 20);
+       }
 
 void Player::handleInput(SDL_Event &event) {
     if (event.type == SDL_KEYDOWN) {
@@ -61,17 +64,17 @@ void Player::update(std::vector<Entity>& otherEntities) {
     // Check for collisions with entities
     if (checkCollision(otherEntities)) {
         // Player is over an entity. Adjust position if colliding and reset jump
-        pos.y = 107; // Adjust position if colliding
         onGround = true; // Player is on the ground or an entity
         isJumping = false;
         currentJumpHeight = 0.0f;
     } else {
         onGround = false; // Player is in the air
+        gravitySpeed = 0.90f;
     }
 
     // Clamp horizontal position
     pos.x = clamp(pos.x, 0, 290);
-    pos.y = clamp(pos.y, 0, 150);
+    pos.y = clamp(pos.y, 0, 300);
 }
 
 
@@ -81,7 +84,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
 void Player::render(SDL_Renderer* renderer) {
     SDL_Rect srcRect = get_currentFrame();
     const Vector2f& pos = getPos();  // Get a reference to the position
-    SDL_Rect dstRect = { (int)pos.x, (int)pos.y, srcRect.w, srcRect.h };
+    SDL_Rect dstRect = { (int)pos.x, (int)pos.y, srcRect.w, srcRect.h};
     SDL_RenderCopy(renderer, get_Texture(), &srcRect, &dstRect);
 }
 
@@ -95,18 +98,26 @@ float Player::clamp(float p_value, float p_min, float p_max)
 }
 
 bool Player::checkCollision(std::vector<Entity>& entityVector) {
-    float playerX = getPos().x + get_currentFrame().w / 2; // Center x-coordinate of the player
+    float playerX = getPos().x + get_currentFrame().w ; // Center x-coordinate of the player
     float playerY = getPos().y + get_currentFrame().h; // Bottom y-coordinate of the player
+    // float playerX = getPos().x; // Center x-coordinate of the player
+    // float playerY = getPos().y +get_currentFrame().; // Bottom y-coordinate of the player
 
     for (Entity& entity : entityVector) {
         std::vector<int> collisionPoints = entity.getCollisionPoints();
         float entityLeft = collisionPoints.at(0);
         float entityRight = collisionPoints.at(1);
         float entityTop = collisionPoints.at(2);
+        float entityDown = collisionPoints.at(3);
+
 
         // Check if the player is between the left and right edges of the entity and above the top
-        if (playerX > entityLeft && playerX < entityRight && playerY > entityTop) {
-            return true; // Collision detected (the player is over the entity)
+        if (playerX+get_currentFrame().x-10 >= entityLeft && playerX +get_currentFrame().x <= entityRight+10 && playerY+get_currentFrame().y >= entityTop && playerY+get_currentFrame().y <=entityDown) {
+            if (!isJumping)
+            {
+            setY(entityTop-10);
+            return true; 
+            }// Collision detected (the player is over the entity)
         }
     }
     return false; // No collisions detected
