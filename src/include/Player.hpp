@@ -35,7 +35,7 @@ public:
 
     bool get_onGround()
     {
-        return onGround;
+        return onGround sd;
     }
 
 
