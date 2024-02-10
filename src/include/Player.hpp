@@ -31,11 +31,11 @@ public:
     float clamp(float p_value, float p_min, float p_max);
 
 
-    bool checkCollision();
+    bool checkCollision(std::vector<Entity>& entityVector);
 
     bool get_onGround()
     {
-        return onGround sd;
+        return onGround;
     }
 
 

@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include "Math.hpp"
+#include <vector>
 
 class Entity
 {
@@ -21,5 +22,16 @@ public:
     }
     SDL_Texture* get_Texture();
     SDL_Rect& get_currentFrame();
+
+    std::vector<int> getCollisionPoints()
+    {
+        std::vector<int> points;
+        points.push_back(getPos().x);
+        points.push_back(getPos().x+get_currentFrame().w);
+        points.push_back(getPos().y);
+        points.push_back(getPos().y+get_currentFrame().h);
+        return points;
+    }
+
 
 };

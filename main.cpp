@@ -92,6 +92,12 @@ int main( int argc,char* args[]) {
             // Vector2f entityPos = e.getPos();
             // std:: cout << entityPos.x << std::endl;
             // std:: cout << entityPos.y << std::endl;
+            // std:: cout << e.get_currentFrame().x << std::endl;
+            // std:: cout << e.get_currentFrame().y << std::endl;
+            // std:: cout << e.getCollisionPoints().at(0) << std::endl;
+            // std:: cout << e.getCollisionPoints().at(1) << std::endl;
+            // std:: cout << e.getCollisionPoints().at(2) << std::endl;
+            // std:: cout << e.getCollisionPoints().at(3) << std::endl;
         }
 
         player.update(entities);

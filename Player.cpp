@@ -39,7 +39,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
     // Apply gravity
-    if (!isJumping || (isJumping && currentJumpHeight >= 40 && !get_onGround())) {
+    if (!isJumping || (isJumping && currentJumpHeight >= 40)) {
         pos.y += gravitySpeed; // Apply gravity
     }
 
@@ -48,10 +48,9 @@ void Player::update(std::vector<Entity>& otherEntities) {
     if (movingRight) pos.x += speed;
 
     // Handle jumping
-    if ((isJumping && currentJumpHeight < 40) || (!get_onGround() && currentJumpHeight < 40)) {
+    if (isJumping && currentJumpHeight < 40) {
         pos.y -= jumpSpeed; // Move up during jump
         currentJumpHeight += jumpSpeed;
-        onGround = false; // Player is in the air
     } else if (currentJumpHeight >= 40) {
         isJumping = false; // End the jump
     }
@@ -60,7 +59,8 @@ void Player::update(std::vector<Entity>& otherEntities) {
     playerRect.y = int(pos.y);
 
     // Check for collisions with entities
-    if (checkCollision()) {
+    if (checkCollision(otherEntities)) {
+        // Player is over an entity. Adjust position if colliding and reset jump
         pos.y = 107; // Adjust position if colliding
         onGround = true; // Player is on the ground or an entity
         isJumping = false;
@@ -73,6 +73,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     pos.x = clamp(pos.x, 0, 290);
     pos.y = clamp(pos.y, 0, 150);
 }
+
 
 
 
@@ -93,17 +94,20 @@ float Player::clamp(float p_value, float p_min, float p_max)
 	return p_value;
 }
 
-bool Player::checkCollision() {
-    float playerX = getPos().x;
-    float playerY = getPos().y;
-    // for (Entity& entity : entityVector) {
-    //     Vector2f entityPos = entity.getPos();
-    //     if ( (playerX>= entityPos.x && playerY >= entityPos.y) || (playerX >= entityPos.x && playerY <= entityPos.y) || 
-    //         (playerX <= entityPos.x && playerY >= entityPos.y) || (playerX <= entityPos.x && playerY <= entityPos.y) )
-    //         return true;
-    // }
+bool Player::checkCollision(std::vector<Entity>& entityVector) {
+    float playerX = getPos().x + get_currentFrame().w / 2; // Center x-coordinate of the player
+    float playerY = getPos().y + get_currentFrame().h; // Bottom y-coordinate of the player
 
-    if (playerY >= 107)
-        return true;
+    for (Entity& entity : entityVector) {
+        std::vector<int> collisionPoints = entity.getCollisionPoints();
+        float entityLeft = collisionPoints.at(0);
+        float entityRight = collisionPoints.at(1);
+        float entityTop = collisionPoints.at(2);
+
+        // Check if the player is between the left and right edges of the entity and above the top
+        if (playerX > entityLeft && playerX < entityRight && playerY > entityTop) {
+            return true; // Collision detected (the player is over the entity)
+        }
+    }
     return false; // No collisions detected
 }
