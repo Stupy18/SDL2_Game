@@ -12,7 +12,7 @@ private:
     float jumpSpeed;
     float originalYPos;
     float currentJumpHeight;
-    bool canDoubleJump;
+    bool canDoubleJump=false;
     float gravity; // Gravity affecting the player
     float groundY=107; // The y-coordinate of the ground or platform
     float gravitySpeed;

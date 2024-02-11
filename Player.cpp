@@ -15,12 +15,14 @@ void Player::handleInput(SDL_Event &event) {
         switch (event.key.keysym.sym) {
             case SDLK_SPACE: 
                 if (!isJumping && onGround) {
+                    // First jump
                     isJumping = true;
-                    canDoubleJump = true; // Allow double jump when first jumping
+                    canDoubleJump = true; // Reset double jump for when player is in the air
                     currentJumpHeight = 0.0f;
                 } else if (!isJumping && canDoubleJump) {
+                    // Double jump
                     isJumping = true;
-                    canDoubleJump = false; // Use the double jump
+                    canDoubleJump = false; // Double jump used
                     currentJumpHeight = 0.0f;
                 }
                 break;
@@ -69,10 +71,9 @@ void Player::update(std::vector<Entity>& otherEntities) {
     // Check for collisions with entities
     if (checkCollision(otherEntities)) {
         // Player is over an entity. Adjust position if colliding and reset jump
-        onGround = true; // Player is on the ground or an entity
+        onGround = true;
         isJumping = false;
-        currentJumpHeight = 0.0f;
-        canDoubleJump = false; // Reset double jump when landing on a platform
+        currentJumpHeight = 0.0f;  // Reset double jump when landing on a platform
     } else {
         onGround = false; // Player is in the air
         gravitySpeed = 0.90f;
@@ -131,9 +132,10 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     if (overlapX > overlapY) { // Collision is vertical
         if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
             // Collision on the top
-            setY(entityRect.y - playerRect.h+1.0f);
+            setY(entityRect.y - playerRect.h + 1.0f);
             onGround = true;
             isJumping = false;
+            canDoubleJump = true; // Reset jump and double jump
             gravitySpeed = 0; // Stop applying gravity when on ground
         } else {
             // Collision on the bottom
