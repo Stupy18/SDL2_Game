@@ -1,4 +1,4 @@
-#include "Player.hpp"
+ #include "Player.hpp"
 #include <vector>
 #include <iostream>
 
@@ -7,7 +7,7 @@ Player::Player(Vector2f p_pos, SDL_Texture* p_texture, int p_speed, int screenWi
       isJumping(false), jumpSpeed(2), originalYPos(p_pos.y), currentJumpHeight(0.0f),
       screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(0.90f)
        {
-        setFrameSize(20, 20);
+        setFrameSize(16, 16, 0, 0);
        }
 
 void Player::handleInput(SDL_Event &event) {
@@ -16,6 +16,11 @@ void Player::handleInput(SDL_Event &event) {
             case SDLK_SPACE: 
                 if (!isJumping && onGround) {
                     isJumping = true;
+                    canDoubleJump = true; // Allow double jump when first jumping
+                    currentJumpHeight = 0.0f;
+                } else if (!isJumping && canDoubleJump) {
+                    isJumping = true;
+                    canDoubleJump = false; // Use the double jump
                     currentJumpHeight = 0.0f;
                 }
                 break;
@@ -67,6 +72,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
         onGround = true; // Player is on the ground or an entity
         isJumping = false;
         currentJumpHeight = 0.0f;
+        canDoubleJump = false; // Reset double jump when landing on a platform
     } else {
         onGround = false; // Player is in the air
         gravitySpeed = 0.90f;
@@ -98,27 +104,49 @@ float Player::clamp(float p_value, float p_min, float p_max)
 }
 
 bool Player::checkCollision(std::vector<Entity>& entityVector) {
-    float playerX = getPos().x + get_currentFrame().w ; // Center x-coordinate of the player
-    float playerY = getPos().y + get_currentFrame().h; // Bottom y-coordinate of the player
-    // float playerX = getPos().x; // Center x-coordinate of the player
-    // float playerY = getPos().y +get_currentFrame().; // Bottom y-coordinate of the player
+    SDL_Rect playerRect = {int(getPos().x), int(getPos().y), get_currentFrame().w, get_currentFrame().h};
 
     for (Entity& entity : entityVector) {
         std::vector<int> collisionPoints = entity.getCollisionPoints();
-        float entityLeft = collisionPoints.at(0);
-        float entityRight = collisionPoints.at(1);
-        float entityTop = collisionPoints.at(2);
-        float entityDown = collisionPoints.at(3);
+        SDL_Rect entityRect = {collisionPoints.at(0), collisionPoints.at(2), collisionPoints.at(1) - collisionPoints.at(0), collisionPoints.at(3) - collisionPoints.at(2)};
 
-
-        // Check if the player is between the left and right edges of the entity and above the top
-        if (playerX+get_currentFrame().x-10 >= entityLeft && playerX +get_currentFrame().x <= entityRight+10 && playerY+get_currentFrame().y >= entityTop && playerY+get_currentFrame().y <=entityDown) {
-            if (!isJumping)
-            {
-            setY(entityTop-10);
-            return true; 
-            }// Collision detected (the player is over the entity)
+        if (playerRect.x < entityRect.x + entityRect.w &&
+            playerRect.x + playerRect.w > entityRect.x &&
+            playerRect.y < entityRect.y + entityRect.h &&
+            playerRect.y + playerRect.h > entityRect.y) {
+            
+            handleCollision(playerRect, entityRect);
+            return true;
         }
     }
-    return false; // No collisions detected
+    return false;
+}
+
+void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityRect) {
+    // Calculate overlap on both X and Y axes
+    int overlapX = std::min(playerRect.x + playerRect.w, entityRect.x + entityRect.w) - std::max(playerRect.x, entityRect.x);
+    int overlapY = std::min(playerRect.y + playerRect.h, entityRect.y + entityRect.h) - std::max(playerRect.y, entityRect.y);
+
+    // Determine the side of the collision based on the least amount of overlap
+    if (overlapX > overlapY) { // Collision is vertical
+        if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
+            // Collision on the top
+            setY(entityRect.y - playerRect.h+1.0f);
+            onGround = true;
+            isJumping = false;
+            gravitySpeed = 0; // Stop applying gravity when on ground
+        } else {
+            // Collision on the bottom
+            setY(entityRect.y + entityRect.h);
+            gravitySpeed = 0.90f; // Apply gravity if not on ground
+        }
+    } else { // Collision is horizontal
+        if (playerRect.x + playerRect.w - overlapX == entityRect.x) {
+            // Collision on the left
+            setX(entityRect.x - playerRect.w);
+        } else {
+            // Collision on the right
+            setX(entityRect.x + entityRect.w);
+        }
+    }
 }

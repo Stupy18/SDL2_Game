@@ -31,13 +31,16 @@ int main( int argc,char* args[]) {
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/background.jpg");
-    SDL_Texture* playerTexture = window.loadTexture("src/res/images/character2.png");
+    SDL_Texture* playerTexture = window.loadTexture("src/res/images/character3.png");
 
     Background background= Background(backgroundTexture, 1280,720);
     Player player(Vector2f(100, 0), playerTexture, 1, WIDTH, HEIGHT);
 
     std::vector<Entity> entities = {
                             Entity(Vector2f(0,130),grassTexture1),
+                            Entity(Vector2f(120,80),grassTexture1),
+                            Entity(Vector2f(152,80),grassTexture1),
+                            Entity(Vector2f(184,80),grassTexture1),
                             Entity(Vector2f(32,130),grassTexture3),
                             Entity(Vector2f(64,130),grassTexture3),
                             Entity(Vector2f(96,130),grassTexture2), 
@@ -49,6 +52,9 @@ int main( int argc,char* args[]) {
 
                             };
 
+    entities.at(1).setFrameSize(32,16,0,0);
+    entities.at(2).setFrameSize(32,16,0,0);
+    entities.at(3).setFrameSize(32,16,0,0);
 
     bool gameRunning=true;
     SDL_Event event;

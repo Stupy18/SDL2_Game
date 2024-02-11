@@ -42,5 +42,5 @@ public:
         pos.x=p_val;
     }
 
-    void setFrameSize(int width, int height);
+    void setFrameSize(int width, int height, int p_x, int p_y);
 };
