@@ -8,8 +8,8 @@ Entity::Entity(Vector2f p_pos ,SDL_Texture* p_texture)
     texture=p_texture;
     currentFrame.x = 0;
     currentFrame.y = 0;
-    currentFrame.w = 32;
-    currentFrame.h = 32;
+    currentFrame.w = 128;
+    currentFrame.h = 128;
 }
 
 SDL_Texture* Entity::get_Texture()

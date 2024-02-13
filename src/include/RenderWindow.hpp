@@ -15,6 +15,14 @@ public:
 	void renderBackground(Background& p_entity);
 	void display();
 	int getRefreshRate();
+	SDL_Renderer* getRenderer()
+	{
+		return renderer;
+	}
+	SDL_Window* getWindow()
+	{
+		return window;
+	}
 
 private:
 	SDL_Window* window;

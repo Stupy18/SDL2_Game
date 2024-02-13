@@ -17,6 +17,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_RenderSetLogicalSize(renderer, 1920, 1080);
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) 
@@ -48,10 +49,10 @@ void RenderWindow::render(Entity& p_entity)
     src.h = p_entity.get_currentFrame().h;
 
     SDL_Rect destination;
-    destination.x = p_entity.getPos().x*4;
-    destination.y = p_entity.getPos().y*4;
-    destination.w = p_entity.get_currentFrame().w*4;
-    destination.h = p_entity.get_currentFrame().h*4;
+    destination.x = p_entity.getPos().x;
+    destination.y = p_entity.getPos().y;
+    destination.w = p_entity.get_currentFrame().w;
+    destination.h = p_entity.get_currentFrame().h;
 
     SDL_RenderCopy(renderer, p_entity.get_Texture(), &src, &destination);
 }

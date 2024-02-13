@@ -2,13 +2,10 @@
 #include <vector>
 #include <iostream>
 
-Player::Player(Vector2f p_pos, SDL_Texture* p_texture, int p_speed, int screenWidth, int screenHeight)
+Player::Player(Vector2f p_pos, SDL_Texture* p_texture, float p_speed, int screenWidth, int screenHeight)
     : Entity(p_pos, p_texture), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
-      isJumping(false), jumpSpeed(2), originalYPos(p_pos.y), currentJumpHeight(0.0f),
-      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(0.90f)
-       {
-        setFrameSize(16, 16, 0, 0);
-       }
+      isJumping(false), jumpSpeed(6), originalYPos(p_pos.y), currentJumpHeight(0.0f),
+      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f){}
 
 void Player::handleInput(SDL_Event &event) {
     if (event.type == SDL_KEYDOWN) {
@@ -50,7 +47,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
     // Apply gravity
-    if (!isJumping || (isJumping && currentJumpHeight >= 40)) {
+    if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2)) {
         pos.y += gravitySpeed; // Apply gravity
     }
 
@@ -59,10 +56,10 @@ void Player::update(std::vector<Entity>& otherEntities) {
     if (movingRight) pos.x += speed;
 
     // Handle jumping
-    if (isJumping && currentJumpHeight < 40) {
+    if (isJumping && currentJumpHeight < get_currentFrame().h*2) {
         pos.y -= jumpSpeed; // Move up during jump
         currentJumpHeight += jumpSpeed;
-    } else if (currentJumpHeight >= 40) {
+    } else if (currentJumpHeight >= get_currentFrame().h*2) {
         isJumping = false; // End the jump
     }
 
@@ -77,12 +74,12 @@ void Player::update(std::vector<Entity>& otherEntities) {
         currentJumpHeight = 0.0f;  // Reset double jump when landing on a platform
     } else {
         onGround = false; // Player is in the air
-        gravitySpeed = 0.90f;
+        gravitySpeed = 4.0f;
     }
 
     // Clamp horizontal position
-    pos.x = clamp(pos.x, 0, 290);
-    pos.y = clamp(pos.y, 0, 300);
+    pos.x = clamp(pos.x, 0, screenWidth);
+    // pos.y = clamp(pos.y, 0, screenHeight+200);
 }
 
 
@@ -157,9 +154,9 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
 
 void Player::reset()
 {
-    if (getPos().y==300) {
+    if (getPos().y>=screenHeight+300) {
 
-    setX(80);
-	setY(70);
+    setX(100);
+	setY(700);
     }
 }

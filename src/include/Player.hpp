@@ -4,7 +4,7 @@
 
 class Player : public Entity {
 private:
-    int speed;
+    float speed;
     bool movingUp, movingDown, movingLeft, movingRight;
 	int screenWidth, screenHeight;
     bool isJumping;
@@ -18,7 +18,7 @@ private:
     float gravitySpeed;
 
 public:
-    Player(Vector2f p_pos, SDL_Texture* p_texture, int p_speed, int screenWidth, int screenHeight);
+    Player(Vector2f p_pos, SDL_Texture* p_texture, float p_speed, int screenWidth, int screenHeight);
     void handleInput(SDL_Event &event);  // Handle keyboard input
     void update(std::vector<Entity>& otherEntities);                       // Update player's position based on input and collision
     void render(SDL_Renderer* renderer); // Render the player

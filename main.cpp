@@ -10,8 +10,9 @@ using namespace std;
 #include "Utils.hpp"
 #include "Background.hpp"
 #include "Player.hpp"
+#include "Cursor.hpp"
 
-const int WIDTH = 800, HEIGHT = 600;
+const int WIDTH = 1920, HEIGHT = 1080;
 
 int main( int argc,char* args[]) {
 
@@ -24,7 +25,8 @@ int main( int argc,char* args[]) {
     if (! IMG_Init(IMG_INIT_PNG))
         std::cout << "IMG_Init has failed. Error" << SDL_GetError() << std::endl;
 
-    RenderWindow window("GAME v1.0",1280, 720);
+    RenderWindow window("GAME v1.0",1920, 1080);
+    SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
 
     SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
@@ -32,29 +34,34 @@ int main( int argc,char* args[]) {
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/background.jpg");
     SDL_Texture* playerTexture = window.loadTexture("src/res/images/character3.png");
+    SDL_Texture* cursorTexture = window.loadTexture("src/res/images/character3.png");
 
-    Background background= Background(backgroundTexture, 1280,720);
-    Player player(Vector2f(70, 80), playerTexture, 1, WIDTH, HEIGHT);
+    Background background= Background(backgroundTexture, 1920,1080);
+    Player player(Vector2f(100, 780), playerTexture, 2.5, WIDTH, HEIGHT);
+    player.setFrameSize(64,64,0,0);
+    Cursor cursor({0, 0}, cursorTexture);
 
     std::vector<Entity> entities = {
-                            Entity(Vector2f(0,130),grassTexture1),
-                            Entity(Vector2f(120,80),grassTexture1),
-                            Entity(Vector2f(152,80),grassTexture1),
-                            Entity(Vector2f(184,80),grassTexture1),
-                            Entity(Vector2f(32,130),grassTexture3),
-                            Entity(Vector2f(64,130),grassTexture3),
-                            Entity(Vector2f(96,130),grassTexture2), 
-                            Entity(Vector2f(160,130),grassTexture3), 
-                            Entity(Vector2f(192,130),grassTexture1),
-                            Entity(Vector2f(250,130),grassTexture2),
-                            Entity(Vector2f(282,130),grassTexture1),
-                            Entity(Vector2f(310,130),grassTexture3)
+                            Entity(Vector2f(0,800),grassTexture1),
+                            Entity(Vector2f(400,600),grassTexture1),
+                            Entity(Vector2f(528,600),grassTexture1),
+                            Entity(Vector2f(656,600),grassTexture1),
+                            Entity(Vector2f(128,800),grassTexture3),
+                            Entity(Vector2f(256,800),grassTexture3),
+                            Entity(Vector2f(600,800),grassTexture2), 
+                            Entity(Vector2f(728,800),grassTexture3), 
+                            Entity(Vector2f(1000,800),grassTexture2),
+                            Entity(Vector2f(1128,800),grassTexture1),
+                            Entity(Vector2f(1256,800),grassTexture3),
+                            Entity(Vector2f(1536,800),grassTexture2),
+                            Entity(Vector2f(1664,800),grassTexture3),
+                            Entity(Vector2f(1792,800),grassTexture3)
 
                             };
 
-    entities.at(1).setFrameSize(32,16,0,0);
-    entities.at(2).setFrameSize(32,16,0,0);
-    entities.at(3).setFrameSize(32,16,0,0);
+    entities.at(1).setFrameSize(128,32,0,0);
+    entities.at(2).setFrameSize(128,32,0,0);
+    entities.at(3).setFrameSize(128,32,0,0);
 
     bool gameRunning=true;
     SDL_Event event;
@@ -107,7 +114,10 @@ int main( int argc,char* args[]) {
         }
 
         player.update(entities);
+        SDL_Renderer* renderer = window.getRenderer();  // Get the renderer from your RenderWindow
+        cursor.update();
         window.render(player);
+        window.render(cursor);
         // std:: cout << player.get_onGround() << std::endl;
 
         
