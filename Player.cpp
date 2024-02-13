@@ -133,7 +133,7 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     if (overlapX > overlapY) { // Collision is vertical
         if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
             // Collision on the top
-            setY(entityRect.y - playerRect.h + 1.0f);
+            setY(entityRect.y - playerRect.h + 1);
             onGround = true;
             isJumping = false;
             canDoubleJump = true; // Reset jump and double jump
@@ -146,10 +146,10 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     } else { // Collision is horizontal
         if (playerRect.x + playerRect.w - overlapX == entityRect.x) {
             // Collision on the left
-            setX(entityRect.x - playerRect.w );
+            setX(entityRect.x - playerRect.w  );
         } else {
             // Collision on the right
-            setX(entityRect.x + entityRect.w);
+            setX(entityRect.x + entityRect.w - 1);
         }
     }
 }
