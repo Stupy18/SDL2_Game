@@ -43,4 +43,14 @@ public:
     }
 
     void setFrameSize(int width, int height, int p_x, int p_y);
+
+    int getWidth()
+    {   
+	return currentFrame.w;
+    }
+
+    int getHeight()
+    {
+	return currentFrame.h;
+    }
 };

@@ -40,5 +40,7 @@ public:
     }
     void handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityRect);
 
+    void reset();
+
 
 };

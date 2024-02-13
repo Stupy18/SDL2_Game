@@ -34,7 +34,7 @@ int main( int argc,char* args[]) {
     SDL_Texture* playerTexture = window.loadTexture("src/res/images/character3.png");
 
     Background background= Background(backgroundTexture, 1280,720);
-    Player player(Vector2f(100, 0), playerTexture, 1, WIDTH, HEIGHT);
+    Player player(Vector2f(70, 80), playerTexture, 1, WIDTH, HEIGHT);
 
     std::vector<Entity> entities = {
                             Entity(Vector2f(0,130),grassTexture1),

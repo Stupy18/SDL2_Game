@@ -45,6 +45,7 @@ void Player::handleInput(SDL_Event &event) {
 
 
 void Player::update(std::vector<Entity>& otherEntities) {
+    reset();
     Vector2f& pos = getPos();
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
@@ -145,10 +146,19 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     } else { // Collision is horizontal
         if (playerRect.x + playerRect.w - overlapX == entityRect.x) {
             // Collision on the left
-            setX(entityRect.x - playerRect.w);
+            setX(entityRect.x - playerRect.w );
         } else {
             // Collision on the right
             setX(entityRect.x + entityRect.w);
         }
+    }
+}
+
+void Player::reset()
+{
+    if (getPos().y==300) {
+
+    setX(80);
+	setY(70);
     }
 }
