@@ -18,4 +18,8 @@ struct Vector2f
         std::cout << x << ", " << y<< std::endl;
     }
 
+     Vector2f operator-(const Vector2f& other) const {
+        return Vector2f(x - other.x, y - other.y);
+    }
+
 };

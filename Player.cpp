@@ -47,7 +47,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
     // Apply gravity
-    if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2)) {
+    if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2.5)) {
         pos.y += gravitySpeed; // Apply gravity
     }
 
@@ -56,10 +56,10 @@ void Player::update(std::vector<Entity>& otherEntities) {
     if (movingRight) pos.x += speed;
 
     // Handle jumping
-    if (isJumping && currentJumpHeight < get_currentFrame().h*2) {
+    if (isJumping && currentJumpHeight < get_currentFrame().h*2.5) {
         pos.y -= jumpSpeed; // Move up during jump
         currentJumpHeight += jumpSpeed;
-    } else if (currentJumpHeight >= get_currentFrame().h*2) {
+    } else if (currentJumpHeight >= get_currentFrame().h*2.5) {
         isJumping = false; // End the jump
     }
 

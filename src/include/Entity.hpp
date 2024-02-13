@@ -53,4 +53,9 @@ public:
     {
 	return currentFrame.h;
     }
+
+    void setTexture(SDL_Texture* p_texture)
+    {
+        texture=p_texture;
+    }
 };
