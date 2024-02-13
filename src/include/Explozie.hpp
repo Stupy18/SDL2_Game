@@ -14,7 +14,7 @@ struct Explosion {
 
     void update(float currentTime) {
         float timeElapsed = currentTime - startTime;
-        currentStage = static_cast<int>(timeElapsed / 0.2f); // Change stage every 0.2 seconds
+        currentStage = static_cast<int>(timeElapsed / 0.1f); // Change stage every 0.2 seconds
         if (currentStage < textures.size()) {
             entity.setTexture(textures[currentStage]);
         }

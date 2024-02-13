@@ -58,4 +58,9 @@ public:
     {
         texture=p_texture;
     }
+
+    SDL_Texture* getTexture()
+    {
+        return texture;
+    }
 };

@@ -2,10 +2,11 @@
 #include <vector>
 #include <iostream>
 
-Player::Player(Vector2f p_pos, SDL_Texture* p_texture, float p_speed, int screenWidth, int screenHeight)
-    : Entity(p_pos, p_texture), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
+Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight)
+    : Entity(p_pos, tex[0]), tex(tex), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
       isJumping(false), jumpSpeed(6), originalYPos(p_pos.y), currentJumpHeight(0.0f),
-      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f){}
+      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f) {
+}
 
 void Player::handleInput(SDL_Event &event) {
     if (event.type == SDL_KEYDOWN) {
@@ -23,9 +24,18 @@ void Player::handleInput(SDL_Event &event) {
                     currentJumpHeight = 0.0f;
                 }
                 break;
-            case SDLK_s: movingDown = true; break;
-            case SDLK_a: movingLeft = true; break;
-            case SDLK_d: movingRight = true; break;
+            case SDLK_s:
+             {
+             movingDown = true;
+             break;
+            }
+            case SDLK_a: movingLeft = true; setTexture(tex[1]); break;
+            case SDLK_d:{
+
+             movingRight = true; 
+             setTexture(tex[0]);
+             break;
+            }
         }
     } else if (event.type == SDL_KEYUP) {
         switch (event.key.keysym.sym) {
@@ -47,7 +57,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
     // Apply gravity
-    if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2.5)) {
+    if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2)) {
         pos.y += gravitySpeed; // Apply gravity
     }
 
@@ -56,10 +66,10 @@ void Player::update(std::vector<Entity>& otherEntities) {
     if (movingRight) pos.x += speed;
 
     // Handle jumping
-    if (isJumping && currentJumpHeight < get_currentFrame().h*2.5) {
+    if (isJumping && currentJumpHeight < get_currentFrame().h*2) {
         pos.y -= jumpSpeed; // Move up during jump
         currentJumpHeight += jumpSpeed;
-    } else if (currentJumpHeight >= get_currentFrame().h*2.5) {
+    } else if (currentJumpHeight >= get_currentFrame().h*2) {
         isJumping = false; // End the jump
     }
 
@@ -110,7 +120,7 @@ bool Player::checkCollision(std::vector<Entity>& entityVector) {
         SDL_Rect entityRect = {collisionPoints.at(0), collisionPoints.at(2), collisionPoints.at(1) - collisionPoints.at(0), collisionPoints.at(3) - collisionPoints.at(2)};
 
         if (playerRect.x < entityRect.x + entityRect.w &&
-            playerRect.x + playerRect.w > entityRect.x &&
+            playerRect.x  + playerRect.w > entityRect.x &&
             playerRect.y < entityRect.y + entityRect.h &&
             playerRect.y + playerRect.h > entityRect.y) {
             

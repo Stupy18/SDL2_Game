@@ -37,7 +37,9 @@ int main( int argc,char* args[]) {
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/background.jpg");
-    SDL_Texture* playerTexture = window.loadTexture("src/res/images/character3.png");
+    SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_stanga.png");
+    SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/character_dreapta.png");
+    std::vector<SDL_Texture*> playerTextures = {playerTexture_right,playerTexture_left};
     SDL_Texture* cursorTexture = window.loadTexture("src/res/images/cursor.png");
     SDL_Texture* bulletTexture = window.loadTexture("src/res/images/bullet.png");
     SDL_Texture* explozieTexture1 = window.loadTexture("src/res/images/explozie.png");
@@ -45,8 +47,8 @@ int main( int argc,char* args[]) {
     SDL_Texture* explozieTexture3 = window.loadTexture("src/res/images/explozie3.png");
 
     Background background= Background(backgroundTexture, 1920,1080);
-    Player player(Vector2f(100, 780), playerTexture, 2.5, WIDTH, HEIGHT);
-    player.setFrameSize(64,64,0,0);
+    Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
+    player.setFrameSize(80,80,0,0);
     SDL_ShowCursor(SDL_DISABLE);
     Cursor cursor({0, 0}, cursorTexture);
     cursor.setFrameSize(62,62,0,0);
@@ -142,7 +144,7 @@ int main( int argc,char* args[]) {
         else if (bullets[i].checkCollision(entities))
         {
             Entity explozieEntity = Entity(bullets[i].getPos(), explosionTextures[0]);
-            explosions.emplace_back(explozieEntity, currentTime, 0.6f, explosionTextures); // 0.9 second duration
+            explosions.emplace_back(explozieEntity, currentTime, 0.3f, explosionTextures); // 0.9 second duration
             bullets.erase(bullets.begin() + i);
         }
         

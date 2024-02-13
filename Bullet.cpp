@@ -32,9 +32,9 @@ bool Bullet::checkCollision(std::vector<Entity>& entityVector) {
         SDL_Rect entityRect = {collisionPoints.at(0), collisionPoints.at(2), collisionPoints.at(1) - collisionPoints.at(0), collisionPoints.at(3) - collisionPoints.at(2)};
 
         if (playerRect.x < entityRect.x + entityRect.w &&
-            playerRect.x + playerRect.w > entityRect.x &&
-            playerRect.y < entityRect.y + entityRect.h &&
-            playerRect.y + playerRect.h > entityRect.y) {
+            playerRect.x + playerRect.w> entityRect.x &&
+            playerRect.y + 10 < entityRect.y + entityRect.h &&
+            playerRect.y + playerRect.h -10 > entityRect.y) {
             
             return true;
         }
