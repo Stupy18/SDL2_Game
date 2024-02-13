@@ -130,7 +130,7 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     int overlapY = std::min(playerRect.y + playerRect.h, entityRect.y + entityRect.h) - std::max(playerRect.y, entityRect.y);
 
     // Determine the side of the collision based on the least amount of overlap
-    if (overlapX > overlapY) { // Collision is vertical
+    if (overlapX + 2 > overlapY) { // Collision is vertical
         if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
             // Collision on the top
             setY(entityRect.y - playerRect.h + 1);
@@ -146,10 +146,11 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     } else { // Collision is horizontal
         if (playerRect.x + playerRect.w - overlapX == entityRect.x) {
             // Collision on the left
-            setX(entityRect.x - playerRect.w  );
+            setX(entityRect.x - playerRect.w );
         } else {
             // Collision on the right
-            setX(entityRect.x + entityRect.w - 1);
+            setX(entityRect.x + entityRect.w );
+            setY(getPos().y);
         }
     }
 }
