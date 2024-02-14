@@ -20,6 +20,14 @@ public:
     {
         return pos;
     }
+
+    void setPos( float p_x, float p_y)
+    {
+        getPos().x=p_x;
+        getPos().y=p_y;
+
+    }
+    
     SDL_Texture* get_Texture();
     SDL_Rect& get_currentFrame();
 
@@ -63,4 +71,5 @@ public:
     {
         return texture;
     }
+    bool checkCollision(const SDL_Rect& otherRect) const;
 };

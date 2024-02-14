@@ -27,4 +27,17 @@ void Entity::setFrameSize(int width, int height, int p_x, int p_y) {
     currentFrame.x = p_x;
     currentFrame.y = p_y;
 }
+bool Entity::checkCollision(const SDL_Rect& otherRect) const {
+    SDL_Rect thisRect = {int(pos.x), int(pos.y), currentFrame.w, currentFrame.h};
+
+    // Check if any of the sides from thisRect are outside of otherRect
+    if (thisRect.x + thisRect.w <= otherRect.x ||     // thisRect right edge past otherRect left
+        thisRect.x >= otherRect.x + otherRect.w ||    // thisRect left edge past otherRect right
+        thisRect.y + thisRect.h >= otherRect.y ||     // thisRect bottom edge past otherRect top
+        thisRect.y <= otherRect.y + otherRect.h) {    // thisRect top edge past otherRect bottom
+        return false; // No collision
+    }
+
+    return true; // Collision
+}
 

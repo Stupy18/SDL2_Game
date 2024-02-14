@@ -10,4 +10,12 @@ namespace utils
         
         return t;
     }
+
+    Vector2f getRandomSpawnPositionOutsideScreen(int screenWidth, int screenHeight)
+    {
+    int randomx = (rand() % 1920);
+    int randomy =  -50 -  (rand() % 300);
+    return Vector2f(randomx,randomy);
+
+    }
 }

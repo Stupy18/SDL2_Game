@@ -15,6 +15,7 @@ using namespace std;
 #include "Bullet.hpp"
 #include "../../../../../MinGW/lib/gcc/mingw32/6.3.0/include/c++/bits/algorithmfwd.h"
 #include "Explozie.hpp"
+#include "Enemy.hpp"
 
 const int WIDTH = 1920, HEIGHT = 1080;
 
@@ -32,6 +33,9 @@ int main( int argc,char* args[]) {
     RenderWindow window("GAME v1.0",1920, 1080);
     SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
+    int spawnInterval = 5; // Time in seconds between each enemy spawn
+    int enemyHealth = 3;
+    float spawnTimer = spawnInterval; // Timer starts at the interval
 
     SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
@@ -45,6 +49,7 @@ int main( int argc,char* args[]) {
     SDL_Texture* explozieTexture1 = window.loadTexture("src/res/images/explozie.png");
     SDL_Texture* explozieTexture2 = window.loadTexture("src/res/images/explozie2.png");
     SDL_Texture* explozieTexture3 = window.loadTexture("src/res/images/explozie3.png");
+    SDL_Texture* enemyTexture = window.loadTexture("src/res/images/explozie3.png");
 
     Background background= Background(backgroundTexture, 1920,1080);
     Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
@@ -55,13 +60,14 @@ int main( int argc,char* args[]) {
     std::vector<Bullet> bullets;
     std::vector<Explosion> explosions;
     std::vector<SDL_Texture*> explosionTextures = { explozieTexture1, explozieTexture2, explozieTexture3 };
+    std::vector<Enemy> enemies;
 
 
     std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),grassTexture1),
-                            Entity(Vector2f(400,600),grassTexture1),
-                            Entity(Vector2f(528,600),grassTexture1),
-                            Entity(Vector2f(656,600),grassTexture1),
+                            // Entity(Vector2f(400,600),grassTexture1),
+                            // Entity(Vector2f(528,600),grassTexture1),
+                            // Entity(Vector2f(656,600),grassTexture1),
                             Entity(Vector2f(128,800),grassTexture3),
                             Entity(Vector2f(256,800),grassTexture3),
                             Entity(Vector2f(600,800),grassTexture2), 
@@ -75,9 +81,9 @@ int main( int argc,char* args[]) {
 
                             };
 
-    entities.at(1).setFrameSize(128,32,0,0);
-    entities.at(2).setFrameSize(128,32,0,0);
-    entities.at(3).setFrameSize(128,32,0,0);
+    // entities.at(1).setFrameSize(128,32,0,0);
+    // entities.at(2).setFrameSize(128,32,0,0);
+    // entities.at(3).setFrameSize(128,32,0,0);
 
     bool gameRunning=true;
     SDL_Event event;
@@ -121,10 +127,74 @@ int main( int argc,char* args[]) {
 
     window.renderBackground(background);
 
+    spawnTimer -= frameTime;
+
+    // Check if it's time to spawn a new enemy
+    if (spawnTimer <= 0) {
+        // Reset the spawn timer
+        spawnTimer = spawnInterval;
+        
+        // Spawn a new enemy
+        Vector2f enemySpawnPos = utils::getRandomSpawnPositionOutsideScreen(WIDTH, HEIGHT);
+        enemies.emplace_back(enemySpawnPos, enemyTexture, 1.3f, enemyHealth);
+    }
+
+    for (Enemy& enemy : enemies) {
+        enemy.update(player.getPos());
+        window.render(enemy);
+    }
+
+    SDL_Rect playerRect = {int(player.getPos().x), int(player.getPos().y), player.get_currentFrame().w, player.get_currentFrame().h};
+
+        for (auto& enemy : enemies) {
+        enemy.update(player.getPos());
+        
+        SDL_Rect enemyRect = {
+            static_cast<int>(enemy.getPos().x),
+            static_cast<int>(enemy.getPos().y),
+            enemy.get_currentFrame().w,
+            enemy.get_currentFrame().h
+        };
+
+        for (auto bulletIt = bullets.begin(); bulletIt != bullets.end();) {
+            SDL_Rect bulletRect = {
+                static_cast<int>(bulletIt->getPos().x),
+                static_cast<int>(bulletIt->getPos().y),
+                bulletIt->get_currentFrame().w,
+                bulletIt->get_currentFrame().h
+            };
+
+            if (SDL_HasIntersection(&enemyRect, &bulletRect)) {
+                Entity explosionEntity = Entity(bulletIt->getPos(), explosionTextures[0]);
+                explosions.emplace_back(explosionEntity, currentTime, 0.15f, explosionTextures);
+                bulletIt = bullets.erase(bulletIt);
+
+                enemy.damage(1);
+                if (enemy.isDead()) {
+                    enemy.markForRemoval();
+                }
+            } else {
+                ++bulletIt;
+            }
+        }
+        if (enemy.checkCollisionWithPlayer(playerRect))
+        {
+            enemy.markForRemoval();
+        }
+    }
+
+        // Remove dead enemies
+        enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+                                    [](const Enemy& enemy) { return enemy.isMarkedForRemoval(); }),
+                    enemies.end());
+
+
+
     for (Entity& e : entities)
     {
         window.render(e);
     }
+
 
     player.update(entities);
     cursor.update();
@@ -144,7 +214,7 @@ int main( int argc,char* args[]) {
         else if (bullets[i].checkCollision(entities))
         {
             Entity explozieEntity = Entity(bullets[i].getPos(), explosionTextures[0]);
-            explosions.emplace_back(explozieEntity, currentTime, 0.3f, explosionTextures); // 0.9 second duration
+            explosions.emplace_back(explozieEntity, currentTime, 0.15f, explosionTextures); // 0.9 second duration
             bullets.erase(bullets.begin() + i);
         }
         
