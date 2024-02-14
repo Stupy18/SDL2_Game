@@ -1,7 +1,7 @@
 #include "Enemy.hpp"
 #include <cmath>
 
-Enemy::Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed,int health)
+Enemy::Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed)
     : Entity(p_pos, p_texture), speed(p_speed) {
     // Initialize velocity or other properties here if needed
 }
@@ -28,11 +28,13 @@ bool Enemy::checkCollisionWithPlayer(const SDL_Rect& playerRect) {
     return SDL_HasIntersection(&playerRect, &enemyRect);
 }
 
-bool Enemy::isDead() {
-    return health <= 0;
+void Enemy::takeDamage(int damageAmount) {
+    health -= damageAmount;
+    if (health <= 0) {
+        health = 0;
+    }
 }
 
-void Enemy::damage(int amount) {
-    health -= amount;
-    if (health < 0) health = 0;
+bool Enemy::isDead() {
+    return health <= 0;
 }

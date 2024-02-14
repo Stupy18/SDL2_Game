@@ -34,7 +34,6 @@ int main( int argc,char* args[]) {
     SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
     int spawnInterval = 5; // Time in seconds between each enemy spawn
-    int enemyHealth = 3;
     float spawnTimer = spawnInterval; // Timer starts at the interval
 
     SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
@@ -136,7 +135,7 @@ int main( int argc,char* args[]) {
         
         // Spawn a new enemy
         Vector2f enemySpawnPos = utils::getRandomSpawnPositionOutsideScreen(WIDTH, HEIGHT);
-        enemies.emplace_back(enemySpawnPos, enemyTexture, 1.3f, enemyHealth);
+        enemies.emplace_back(enemySpawnPos, enemyTexture, 1.3f);
     }
 
     for (Enemy& enemy : enemies) {
@@ -146,17 +145,23 @@ int main( int argc,char* args[]) {
 
     SDL_Rect playerRect = {int(player.getPos().x), int(player.getPos().y), player.get_currentFrame().w, player.get_currentFrame().h};
 
-        for (auto& enemy : enemies) {
-        enemy.update(player.getPos());
-        
+    for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();) {
         SDL_Rect enemyRect = {
-            static_cast<int>(enemy.getPos().x),
-            static_cast<int>(enemy.getPos().y),
-            enemy.get_currentFrame().w,
-            enemy.get_currentFrame().h
+            static_cast<int>(enemyIt->getPos().x),
+            static_cast<int>(enemyIt->getPos().y),
+            enemyIt->get_currentFrame().w,
+            enemyIt->get_currentFrame().h
         };
 
-        for (auto bulletIt = bullets.begin(); bulletIt != bullets.end();) {
+        // Check collision with player
+        if (SDL_HasIntersection(&playerRect, &enemyRect)) {
+            // Remove the enemy on collision with the player
+            enemyIt = enemies.erase(enemyIt);
+            continue; // Skip the rest of the loop and proceed with the next iteration
+        }
+
+        bool enemyRemoved = false;
+        for (auto bulletIt = bullets.begin(); bulletIt != bullets.end() && !enemyRemoved;) {
             SDL_Rect bulletRect = {
                 static_cast<int>(bulletIt->getPos().x),
                 static_cast<int>(bulletIt->getPos().y),
@@ -165,28 +170,31 @@ int main( int argc,char* args[]) {
             };
 
             if (SDL_HasIntersection(&enemyRect, &bulletRect)) {
+                // Spawn explosion at bullet's position
+                float bulletX=bulletIt->getPos().x;
+                float bulletY=bulletIt->getPos().y;
+                bulletIt->setPos(bulletX-50.0f,bulletY-50.0f);
+
                 Entity explosionEntity = Entity(bulletIt->getPos(), explosionTextures[0]);
                 explosions.emplace_back(explosionEntity, currentTime, 0.15f, explosionTextures);
+
+                // Remove the bullet
                 bulletIt = bullets.erase(bulletIt);
 
-                enemy.damage(1);
-                if (enemy.isDead()) {
-                    enemy.markForRemoval();
-                }
+                // Remove the enemy
+                enemyIt = enemies.erase(enemyIt);
+                enemyRemoved = true; // Mark that the enemy was removed
             } else {
-                ++bulletIt;
+                ++bulletIt; // No collision, move to the next bullet
             }
         }
-        if (enemy.checkCollisionWithPlayer(playerRect))
-        {
-            enemy.markForRemoval();
+
+        if (!enemyRemoved) {
+            ++enemyIt; // No bullets hit this enemy, move to the next enemy
         }
+        // The enemyIt iterator is already correctly positioned for the next loop iteration
     }
 
-        // Remove dead enemies
-        enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-                                    [](const Enemy& enemy) { return enemy.isMarkedForRemoval(); }),
-                    enemies.end());
 
 
 
