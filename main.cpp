@@ -143,7 +143,7 @@ int main( int argc,char* args[]) {
         window.render(enemy);
     }
 
-    SDL_Rect playerRect = {int(player.getPos().x), int(player.getPos().y), player.get_currentFrame().w, player.get_currentFrame().h};
+    SDL_Rect playerRect = {abs(int(player.getPos().x)), abs(int(player.getPos().y)+50), player.get_currentFrame().w-40, player.get_currentFrame().h-10};
 
     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();) {
         SDL_Rect enemyRect = {
