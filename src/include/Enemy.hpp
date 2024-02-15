@@ -10,7 +10,7 @@ private:
     bool markedForRemoval;
 
 public:
-    Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed);
+    Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed,int p_health);
     void update(const Vector2f& playerPos); // Update enemy's position to follow the player
     bool checkCollisionWithPlayer(const SDL_Rect& playerRect);
     bool isDead();

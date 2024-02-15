@@ -31,7 +31,7 @@ int main( int argc,char* args[]) {
         std::cout << "IMG_Init has failed. Error" << SDL_GetError() << std::endl;
 
     RenderWindow window("GAME v1.0",1920, 1080);
-    SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
@@ -135,7 +135,8 @@ int main( int argc,char* args[]) {
         
         // Spawn a new enemy
         Vector2f enemySpawnPos = utils::getRandomSpawnPositionOutsideScreen(WIDTH, HEIGHT);
-        enemies.emplace_back(enemySpawnPos, enemyTexture, 1.3f);
+        Enemy enemy(enemySpawnPos, enemyTexture, 1.3f,3);
+        enemies.emplace_back(enemy);
     }
 
     for (Enemy& enemy : enemies) {
@@ -180,10 +181,14 @@ int main( int argc,char* args[]) {
 
                 // Remove the bullet
                 bulletIt = bullets.erase(bulletIt);
-
-                // Remove the enemy
+                enemyIt->takeDamage(1);
+                if (enemyIt->isDead())
+                {
+                    // Remove the enemy
                 enemyIt = enemies.erase(enemyIt);
                 enemyRemoved = true; // Mark that the enemy was removed
+                }
+                
             } else {
                 ++bulletIt; // No collision, move to the next bullet
             }

@@ -1,9 +1,9 @@
 #include "Enemy.hpp"
 #include <cmath>
 
-Enemy::Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed)
-    : Entity(p_pos, p_texture), speed(p_speed) {
-    // Initialize velocity or other properties here if needed
+Enemy::Enemy(Vector2f p_pos, SDL_Texture* p_texture, float p_speed,int p_health)
+    : Entity(p_pos, p_texture), speed(p_speed), health(p_health), markedForRemoval(false) {
+    // other initialization code
 }
 
 void Enemy::update(const Vector2f& playerPos) {
@@ -29,11 +29,11 @@ bool Enemy::checkCollisionWithPlayer(const SDL_Rect& playerRect) {
 }
 
 void Enemy::takeDamage(int damageAmount) {
-    health -= damageAmount;
-    if (health <= 0) {
-        health = 0;
+        health -= damageAmount;
+        if (health <= 0) {
+            markedForRemoval = true;
+        }
     }
-}
 
 bool Enemy::isDead() {
     return health <= 0;
