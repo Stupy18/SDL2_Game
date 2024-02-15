@@ -17,6 +17,8 @@ private:
     float groundY=107; // The y-coordinate of the ground or platform
     float gravitySpeed;
     const std::vector<SDL_Texture*>& tex;
+    float damage;
+    int health;
 
 public:
     Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight);
@@ -42,6 +44,26 @@ public:
     void handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityRect);
 
     void reset();
+
+    float get_Damage()
+    {
+        return damage;
+    }
+
+    void set_Damage(float p_damage)
+    {
+        damage=p_damage;
+    }
+
+    int get_Health()
+    {
+        return health;
+    }
+
+    void set_Health(int p_health)
+    {
+        health=p_health;
+    }
 
 
 };

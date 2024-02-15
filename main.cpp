@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_image.h>
+#include <SDL2\SDL_ttf.h>
 #include <vector>
 #include <algorithm>
 using namespace std;
@@ -16,6 +17,7 @@ using namespace std;
 #include "../../../../../MinGW/lib/gcc/mingw32/6.3.0/include/c++/bits/algorithmfwd.h"
 #include "Explozie.hpp"
 #include "Enemy.hpp"
+#include "RenderText.hpp"
 
 const int WIDTH = 1920, HEIGHT = 1080;
 
@@ -35,6 +37,10 @@ int main( int argc,char* args[]) {
     int windowRefreshRate = window.getRefreshRate();
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
+    RenderText renderText(window.getRenderer(), "src/res/fonts/LoveDays-2v7Oe.ttf",40);
+    // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\ccoverbyteoffregular.otf"
+    // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\LoveDays-2v7Oe.ttf"
+    // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\Freedom-nZ4J.otf"
 
     SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
@@ -49,6 +55,7 @@ int main( int argc,char* args[]) {
     SDL_Texture* explozieTexture2 = window.loadTexture("src/res/images/explozie2.png");
     SDL_Texture* explozieTexture3 = window.loadTexture("src/res/images/explozie3.png");
     SDL_Texture* enemyTexture = window.loadTexture("src/res/images/explozie3.png");
+    SDL_Texture* HPTexture = window.loadTexture("src/res/images/HP_ICON2.png");
 
     Background background= Background(backgroundTexture, 1920,1080);
     Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
@@ -56,6 +63,8 @@ int main( int argc,char* args[]) {
     SDL_ShowCursor(SDL_DISABLE);
     Cursor cursor({0, 0}, cursorTexture);
     cursor.setFrameSize(62,62,0,0);
+    Entity HP(Vector2f(20,10),HPTexture);
+    HP.setFrameSize(80,80,0,0);
     std::vector<Bullet> bullets;
     std::vector<Explosion> explosions;
     std::vector<SDL_Texture*> explosionTextures = { explozieTexture1, explozieTexture2, explozieTexture3 };
@@ -158,6 +167,7 @@ int main( int argc,char* args[]) {
         if (SDL_HasIntersection(&playerRect, &enemyRect)) {
             // Remove the enemy on collision with the player
             enemyIt = enemies.erase(enemyIt);
+            player.set_Health(player.get_Health()-20);
             continue; // Skip the rest of the loop and proceed with the next iteration
         }
 
@@ -181,7 +191,7 @@ int main( int argc,char* args[]) {
 
                 // Remove the bullet
                 bulletIt = bullets.erase(bulletIt);
-                enemyIt->takeDamage(1);
+                enemyIt->takeDamage(player.get_Damage());
                 if (enemyIt->isDead())
                 {
                     // Remove the enemy
@@ -250,6 +260,9 @@ int main( int argc,char* args[]) {
         window.render(bullet);
     }
 
+    window.render(HP);
+    SDL_Color textColor = {0, 0, 0, 0}; // Black color
+    renderText.display(to_string(player.get_Health()), 115, 40, textColor); //30 10 for top left
     window.display();
 
     int frameTicks = SDL_GetTicks() - startTicks;
