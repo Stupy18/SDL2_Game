@@ -45,7 +45,7 @@ int main( int argc,char* args[]) {
     SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
-    SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/background.jpg");
+    SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/casino_background.png");
     SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_stanga.png");
     SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/character_dreapta.png");
     std::vector<SDL_Texture*> playerTextures = {playerTexture_right,playerTexture_left};
@@ -123,7 +123,13 @@ int main( int argc,char* args[]) {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 Vector2f cursorPos = cursor.getPos();
                 Vector2f playerPos = player.getPos();
-                bullets.emplace_back(playerPos, bulletTexture, cursorPos, 700.0f);
+                player.is_ammoEmpty();
+                if (player.hasAmmo())
+                {
+                    player.set_currentAmmo(player.get_currentAmmo()-1);
+                    bullets.emplace_back(playerPos, bulletTexture, cursorPos, 700.0f);
+                }
+
             }
         }
 
@@ -262,7 +268,9 @@ int main( int argc,char* args[]) {
 
     window.render(HP);
     SDL_Color textColor = {0, 0, 0, 0}; // Black color
+    SDL_Color textColorYellow = {255, 255, 0, 100}; // yellow color
     renderText.display(to_string(player.get_Health()), 115, 40, textColor); //30 10 for top left
+    renderText.display(to_string(player.get_currentAmmo()) + "/" + to_string(player.get_totalAmmo()), 1780, 1000, textColorYellow);
     window.display();
 
     int frameTicks = SDL_GetTicks() - startTicks;

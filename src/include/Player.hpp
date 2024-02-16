@@ -19,6 +19,10 @@ private:
     const std::vector<SDL_Texture*>& tex;
     float damage;
     int health;
+    int currentAmmo;
+    int totalAmmo;
+    bool isEmpty;
+    
 
 public:
     Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight);
@@ -64,6 +68,41 @@ public:
     {
         health=p_health;
     }
+
+        int get_currentAmmo()
+    {
+        return currentAmmo;
+    }
+
+    int get_totalAmmo()
+    {
+        return totalAmmo;
+    }
+
+    void set_currentAmmo(int p_ammo)
+    {
+        currentAmmo=p_ammo;
+    }
+
+     void set_totalAmmo(int p_ammo)
+    {
+        totalAmmo=p_ammo;
+    }
+
+    void is_ammoEmpty()
+    {
+        if (currentAmmo<=0)
+        {
+            isEmpty=true;
+        }
+    
+    }
+
+    bool hasAmmo()
+    {
+        return !isEmpty;
+    }
+
 
 
 };

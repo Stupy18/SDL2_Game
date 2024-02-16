@@ -5,7 +5,7 @@
 Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight)
     : Entity(p_pos, tex[0]), tex(tex), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
       isJumping(false), jumpSpeed(6), originalYPos(p_pos.y), currentJumpHeight(0.0f),
-      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f) , damage(1.0f), health(100) {
+      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f) , damage(1.0f), health(100),  currentAmmo(6), totalAmmo(99), isEmpty(false){
 }
 
 void Player::handleInput(SDL_Event &event) {

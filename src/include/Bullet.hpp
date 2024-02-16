@@ -15,4 +15,5 @@ public:
     void update(float deltaTime);  // Override the update method to move the bullet
     bool isOffScreen(int screenWidth, int screenHeight);
     bool checkCollision(std::vector<Entity>& entityVector);
+
 };
