@@ -168,5 +168,31 @@ void Player::reset()
 
     setX(100);
 	setY(700);
+    health=health - 25;
     }
 }
+
+void Player::reload()
+{
+    totalAmmo=totalAmmo - 6 + currentAmmo;
+    currentAmmo=6;
+    isEmpty=false;
+}
+
+void Player::startReloading() {
+        isReloading = true;
+        reloadTimer = 2.0f;  // Set the reload duration to 2 seconds
+    }
+
+void Player::updateReloadTimer(float deltaTime) {
+        if (isReloading) {
+            reloadTimer -= deltaTime;
+            if (reloadTimer <= 0) {
+                isReloading = false;
+                reload();  // Reload the ammo here
+            }
+        }
+    }
+bool Player::isCurrentlyReloading() const {
+        return isReloading;
+    }

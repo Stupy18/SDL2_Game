@@ -22,6 +22,8 @@ private:
     int currentAmmo;
     int totalAmmo;
     bool isEmpty;
+    bool isReloading;
+    float reloadTimer;
     
 
 public:
@@ -102,6 +104,12 @@ public:
     {
         return !isEmpty;
     }
+
+    void reload();
+
+    void startReloading();
+    void updateReloadTimer(float deltaTime);
+    bool isCurrentlyReloading() const;
 
 
 

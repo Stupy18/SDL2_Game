@@ -37,7 +37,7 @@ int main( int argc,char* args[]) {
     int windowRefreshRate = window.getRefreshRate();
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
-    RenderText renderText(window.getRenderer(), "src/res/fonts/LoveDays-2v7Oe.ttf",40);
+    RenderText renderText(window.getRenderer(), "src/res/fonts/ccoverbyteoffregular.otf",40);
     // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\ccoverbyteoffregular.otf"
     // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\LoveDays-2v7Oe.ttf"
     // "C:\Users\stupa\OneDrive\Desktop\SDL_Template\src\res\fonts\Freedom-nZ4J.otf"
@@ -58,6 +58,7 @@ int main( int argc,char* args[]) {
     SDL_Texture* HPTexture = window.loadTexture("src/res/images/HP_ICON2.png");
 
     Background background= Background(backgroundTexture, 1920,1080);
+    SDL_SetTextureAlphaMod(backgroundTexture, 150);
     Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
     player.setFrameSize(80,80,0,0);
     SDL_ShowCursor(SDL_DISABLE);
@@ -108,28 +109,38 @@ int main( int argc,char* args[]) {
     
     currentTime = newTime;
 
+    // Calculate deltaTime
+    float deltaTime = frameTime;
+
+    // Update player's reload timer
+    player.updateReloadTimer(deltaTime);
+
     accumulator += frameTime;
 
-    while(accumulator >= timeStep)
-    {
-        while(SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-                gameRunning=false;
+    while (accumulator >= timeStep) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                gameRunning = false;
+            }
 
             player.handleInput(event);
 
-            // Check for mouse click to spawn a bullet
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
+            // Check for mouse click to spawn a bullet and ensure player is not reloading
+            if (event.type == SDL_MOUSEBUTTONDOWN && !player.isCurrentlyReloading()) {
                 Vector2f cursorPos = cursor.getPos();
                 Vector2f playerPos = player.getPos();
                 player.is_ammoEmpty();
-                if (player.hasAmmo())
-                {
-                    player.set_currentAmmo(player.get_currentAmmo()-1);
+                if (player.hasAmmo()) {
+                    player.set_currentAmmo(player.get_currentAmmo() - 1);
                     bullets.emplace_back(playerPos, bulletTexture, cursorPos, 700.0f);
                 }
+            }
 
+            // Handle reload input
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_r && !player.isCurrentlyReloading()) {
+                    player.startReloading();
+                }
             }
         }
 
@@ -190,7 +201,7 @@ int main( int argc,char* args[]) {
                 // Spawn explosion at bullet's position
                 float bulletX=bulletIt->getPos().x;
                 float bulletY=bulletIt->getPos().y;
-                bulletIt->setPos(bulletX-50.0f,bulletY-50.0f);
+                bulletIt->setPos(bulletX-50.0f,bulletY-80.0f);
 
                 Entity explosionEntity = Entity(bulletIt->getPos(), explosionTextures[0]);
                 explosions.emplace_back(explosionEntity, currentTime, 0.15f, explosionTextures);
@@ -268,9 +279,10 @@ int main( int argc,char* args[]) {
 
     window.render(HP);
     SDL_Color textColor = {0, 0, 0, 0}; // Black color
-    SDL_Color textColorYellow = {255, 255, 0, 100}; // yellow color
-    renderText.display(to_string(player.get_Health()), 115, 40, textColor); //30 10 for top left
-    renderText.display(to_string(player.get_currentAmmo()) + "/" + to_string(player.get_totalAmmo()), 1780, 1000, textColorYellow);
+    SDL_Color textColorYellow = {255, 255, 0, 0}; // yellow color
+    SDL_Color textColorWhite = {255, 255, 255, 255}; // white color
+    renderText.display(to_string(player.get_Health()), 115, 40, textColorWhite); //30 10 for top left
+    renderText.display(to_string(player.get_currentAmmo()) + "/" + to_string(player.get_totalAmmo()), 1780, 1000, textColorWhite);
     window.display();
 
     int frameTicks = SDL_GetTicks() - startTicks;
