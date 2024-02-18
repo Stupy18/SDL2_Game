@@ -104,16 +104,25 @@ int main(int argc, char* args[]) {
 
     while (gameRunning) {
         switch (gameState) {
-            case GameState::MainMenu: {
+           case GameState::MainMenu: {
                 SDL_ShowCursor(SDL_ENABLE);
-                SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black color
+                SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black background color
                 SDL_RenderClear(window.getRenderer());
 
-                // Display "Play" button
+                // Display background
                 window.renderBackground(background);
-                SDL_Rect playButton = {WIDTH / 2 - 100, HEIGHT / 2, 200, 50}; // x, y, width, height
-                renderText.display("Play", playButton.x + 50, playButton.y + 10, {255, 255, 255, 255}); // Adjust text position as needed
-                SDL_RenderDrawRect(window.getRenderer(), &playButton); // Draw button outline
+
+                // Display "Play" button
+                SDL_Rect playButton = {WIDTH / 2 - 100, HEIGHT / 2, 200, 60}; // x, y, width, height
+                SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black button color
+                SDL_RenderFillRect(window.getRenderer(), &playButton); // Fill button with solid color
+
+                // Draw button text
+                renderText.display("Play", playButton.x + 60, playButton.y + 5 , {255, 255, 255, 255}); // White text color, adjust text position as needed
+
+                // Draw button outline (optional)
+                SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
+                SDL_RenderDrawRect(window.getRenderer(), &playButton);
 
                 SDL_RenderPresent(window.getRenderer());
 
@@ -129,26 +138,7 @@ int main(int argc, char* args[]) {
                             mouseY >= playButton.y && mouseY <= playButton.y + playButton.h) {
                             gameState = GameState::Playing;
                             // Reset game elements for new game
-                            player.setPos(100, 780); // Set starting position
-                            player.setSpeed(2.5); // Set speed
-                            player.setMovingUp(false);
-                            player.setMovingDown(false);
-                            player.setMovingLeft(false);
-                            player.setMovingRight(false);
-                            player.setIsJumping(false);
-                            player.setJumpSpeed(6);
-                            player.setOriginalYPos(780); // Assuming this is the Y position
-                            player.setCurrentJumpHeight(0.0f);
-                            player.setScreenWidth(WIDTH);
-                            player.setScreenHeight(HEIGHT);
-                            player.setGravitySpeed(4.0f);
-                            player.set_Damage(1.0f);
-                            player.set_Health(100);
-                            player.set_currentAmmo(6);
-                            player.set_totalAmmo(99);
-                            player.setIsEmpty(false);
-
-                            // Clear enemies, bullets, explosions
+                            player.reset_stats(); // Reset player stats and position
                             enemies.clear();
                             bullets.clear();
                             explosions.clear();
@@ -157,6 +147,7 @@ int main(int argc, char* args[]) {
                 }
                 break;
             }
+
             case GameState::Playing: {
                 SDL_ShowCursor(SDL_DISABLE);
                 int startTicks = SDL_GetTicks();

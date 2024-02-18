@@ -163,4 +163,26 @@ void setGravitySpeed(float p_gravitySpeed) {
 void setIsEmpty(bool p_isEmpty) {
     isEmpty = p_isEmpty;
 }
+
+void reset_stats()
+{
+    setPos(100, 780); // Set starting position
+    setSpeed(2.5); // Set speed
+    setMovingUp(false);
+    setMovingDown(false);
+    setMovingLeft(false);
+    setMovingRight(false);
+    setIsJumping(false);
+    setJumpSpeed(6);
+    setOriginalYPos(780); // Assuming this is the Y position
+    setCurrentJumpHeight(0.0f);
+    setScreenWidth(1920);
+    setScreenHeight(1080);
+    setGravitySpeed(4.0f);
+    set_Damage(1.0f);
+    set_Health(100);
+    set_currentAmmo(6);
+    set_totalAmmo(99);
+    setIsEmpty(false);
+}
 };
