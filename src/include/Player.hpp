@@ -112,5 +112,55 @@ public:
     bool isCurrentlyReloading() const;
 
 
+void setSpeed(float p_speed) {
+    speed = p_speed;
+}
 
+void setMovingUp(bool p_movingUp) {
+    movingUp = p_movingUp;
+}
+
+void setMovingDown(bool p_movingDown) {
+    movingDown = p_movingDown;
+}
+
+void setMovingLeft(bool p_movingLeft) {
+    movingLeft = p_movingLeft;
+}
+
+void setMovingRight(bool p_movingRight) {
+    movingRight = p_movingRight;
+}
+
+void setIsJumping(bool p_isJumping) {
+    isJumping = p_isJumping;
+}
+
+void setJumpSpeed(float p_jumpSpeed) {
+    jumpSpeed = p_jumpSpeed;
+}
+
+void setOriginalYPos(float p_originalYPos) {
+    originalYPos = p_originalYPos;
+}
+
+void setCurrentJumpHeight(float p_currentJumpHeight) {
+    currentJumpHeight = p_currentJumpHeight;
+}
+
+void setScreenWidth(int p_screenWidth) {
+    screenWidth = p_screenWidth;
+}
+
+void setScreenHeight(int p_screenHeight) {
+    screenHeight = p_screenHeight;
+}
+
+void setGravitySpeed(float p_gravitySpeed) {
+    gravitySpeed = p_gravitySpeed;
+}
+
+void setIsEmpty(bool p_isEmpty) {
+    isEmpty = p_isEmpty;
+}
 };
