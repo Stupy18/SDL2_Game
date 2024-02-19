@@ -45,9 +45,9 @@ int main(int argc, char* args[]) {
     int windowRefreshRate = window.getRefreshRate();
     RenderText renderText(window.getRenderer(), "src/res/fonts/ccoverbyteoffregular.otf", 40);
 
-    SDL_Texture* grassTexture1 = window.loadTexture("src/res/images/groundTile.png");
-    SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
-    SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
+    SDL_Texture* diceTexture1 = window.loadTexture("src/res/images/dice_1.png");
+    SDL_Texture* diceTexture2 = window.loadTexture("src/res/images/dice_2.png");
+    SDL_Texture* diceTexture3 = window.loadTexture("src/res/images/dice_3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/casino_background.png");
     SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
     SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_stanga.png");
@@ -99,20 +99,20 @@ int main(int argc, char* args[]) {
     vector<Enemy> enemies;
 
  std::vector<Entity> entities = {
-                            Entity(Vector2f(0,800),grassTexture1),
+                            Entity(Vector2f(0,800),diceTexture1),
                             // Entity(Vector2f(400,600),grassTexture1),
                             // Entity(Vector2f(528,600),grassTexture1),
                             // Entity(Vector2f(656,600),grassTexture1),
-                            Entity(Vector2f(128,800),grassTexture3),
-                            Entity(Vector2f(256,800),grassTexture3),
-                            Entity(Vector2f(600,800),grassTexture2), 
-                            Entity(Vector2f(728,800),grassTexture3), 
-                            Entity(Vector2f(1000,800),grassTexture2),
-                            Entity(Vector2f(1128,800),grassTexture1),
-                            Entity(Vector2f(1256,800),grassTexture3),
-                            Entity(Vector2f(1536,800),grassTexture2),
-                            Entity(Vector2f(1664,800),grassTexture3),
-                            Entity(Vector2f(1792,800),grassTexture3)
+                            Entity(Vector2f(128,800),diceTexture3),
+                            Entity(Vector2f(256,800),diceTexture3),
+                            Entity(Vector2f(600,800),diceTexture2), 
+                            Entity(Vector2f(728,800),diceTexture3), 
+                            Entity(Vector2f(1000,800),diceTexture2),
+                            Entity(Vector2f(1128,800),diceTexture1),
+                            Entity(Vector2f(1256,800),diceTexture3),
+                            Entity(Vector2f(1536,800),diceTexture2),
+                            Entity(Vector2f(1664,800),diceTexture3),
+                            Entity(Vector2f(1792,800),diceTexture3)
 
                             };
 
@@ -400,7 +400,7 @@ int main(int argc, char* args[]) {
            case GameState::Dead: {
                 SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black color
                 SDL_RenderClear(window.getRenderer());
-                renderText.display("Game Over! Press 'H' to Retry", WIDTH / 2 - 150, HEIGHT / 2, {255, 255, 255, 255}); // White color
+                renderText.display("Game Over! Press 'H' to Retry", WIDTH / 2 - 300 , HEIGHT / 2, {255, 255, 255, 255}); // White color
                 SDL_RenderPresent(window.getRenderer());
 
                 while (SDL_PollEvent(&event)) {
