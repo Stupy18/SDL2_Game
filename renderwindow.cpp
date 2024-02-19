@@ -98,6 +98,6 @@ void RenderWindow::applyFadeEffect(SDL_Renderer* renderer, int startAlpha, int e
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha);
         SDL_RenderFillRect(renderer, NULL);
         SDL_RenderPresent(renderer);
-        SDL_Delay(2); // Delay to control the speed of the fade
+        SDL_Delay(8); // Delay to control the speed of the fade
     }
 }

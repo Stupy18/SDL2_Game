@@ -23,7 +23,8 @@ enum class GameState {
     Playing,
     Dead,
     Exit,
-    MainMenu
+    MainMenu,
+    Loading
 };
 
 bool fadeEffectApplied = false;
@@ -66,10 +67,10 @@ int main(int argc, char* args[]) {
     // Example: To give a darker, night-time look
     SDL_SetTextureColorMod(backgroundTexture, 128, 128, 128); // Adjust RGB values as needed
     SDL_SetTextureAlphaMod(backgroundTexture, 230); // Adjust alpha value (0-255) as needed
-    SDL_Texture* fogTexture = window.loadTexture("src/res/images/fog.png");
-    SDL_SetTextureBlendMode(fogTexture, SDL_BLENDMODE_BLEND);
-    // For smoke
-    SDL_SetTextureColorMod(fogTexture, 128, 128, 128); // Darken for smoke effect
+    // SDL_Texture* fogTexture = window.loadTexture("src/res/images/fog.png");
+    // SDL_SetTextureBlendMode(fogTexture, SDL_BLENDMODE_BLEND);
+    // // For smoke
+    // SDL_SetTextureColorMod(fogTexture, 128, 128, 128); // Darken for smoke effect
 
 
 
@@ -77,7 +78,7 @@ int main(int argc, char* args[]) {
 
 
     Background background(backgroundTexture, 1920, 1080);
-    Background fog(fogTexture, 1920, 1080);
+    // Background fog(fogTexture, 1920, 1080);
     Background MainMenubackground(MainMenubackgroundTexture, 1920, 1080);
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
@@ -116,6 +117,7 @@ int main(int argc, char* args[]) {
                             };
 
     GameState gameState = GameState::MainMenu;
+    bool transitionToLoading = false;
     bool gameRunning = true;
     SDL_Event event;
     const float timeStep = 0.01f;
@@ -147,7 +149,6 @@ int main(int argc, char* args[]) {
                 renderText.display("Play", playButton.x + 60, playButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
                 renderText.display("Options", optionsButton.x + 30, optionsButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
 
-
                 // Draw button outline (optional)
                 SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
                 SDL_RenderDrawRect(window.getRenderer(), &playButton);
@@ -168,8 +169,9 @@ int main(int argc, char* args[]) {
                         if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.w &&
                             mouseY >= playButton.y && mouseY <= playButton.y + playButton.h) {
                             SDL_ShowCursor(SDL_DISABLE);
-                            window.applyFadeEffect(window.getRenderer(), 0, 255, 200); // Fade out
-                            gameState = GameState::Playing;
+                            window.applyFadeEffect(window.getRenderer(), 0, 255, 30); // Fade out
+                            gameState = GameState::Loading;
+                            transitionToLoading = true;
                             fadeEffectApplied = false;  // Reset the fade effect flag
                             // Reset game elements for new game
                             player.reset_stats(); // Reset player stats and position
@@ -181,7 +183,18 @@ int main(int argc, char* args[]) {
                 }
                 break;
             }
-
+            case GameState::Loading: {
+                        if (transitionToLoading) {
+                            window.applyFadeEffect(window.getRenderer(), 0, 255, 30); // Fade to black
+                            renderText.display("Loading...", WIDTH / 2 -100, HEIGHT / 2, {255, 255, 255, 255});
+                            SDL_RenderPresent(window.getRenderer());
+                            SDL_Delay(2000); // Hold the loading screen for a moment
+                            window.applyFadeEffect(window.getRenderer(), 255, 0, 30); // Fade out
+                            transitionToLoading = false;
+                            gameState = GameState::Playing;
+                        }
+                        break;
+            }
             case GameState::Playing: {
                 SDL_ShowCursor(SDL_DISABLE);
                 window.clear();
