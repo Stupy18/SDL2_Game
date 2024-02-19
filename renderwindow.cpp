@@ -88,3 +88,16 @@ int RenderWindow::getRefreshRate()
 
     return mode.refresh_rate;
 }
+
+void RenderWindow::applyFadeEffect(SDL_Renderer* renderer, int startAlpha, int endAlpha, int duration) {
+    int alpha = startAlpha;
+    int alphaStep = abs((endAlpha - startAlpha)) / duration;
+
+    for (int i = 0; i < duration; ++i) {
+        alpha += alphaStep;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha);
+        SDL_RenderFillRect(renderer, NULL);
+        SDL_RenderPresent(renderer);
+        SDL_Delay(2); // Delay to control the speed of the fade
+    }
+}

@@ -26,6 +26,8 @@ enum class GameState {
     MainMenu
 };
 
+bool fadeEffectApplied = false;
+
 const int WIDTH = 1920, HEIGHT = 1080;
 
 int main(int argc, char* args[]) {
@@ -46,6 +48,7 @@ int main(int argc, char* args[]) {
     SDL_Texture* grassTexture2 = window.loadTexture("src/res/images/groundTile2.png");
     SDL_Texture* grassTexture3 = window.loadTexture("src/res/images/groundTile3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/casino_background.png");
+    SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
     SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_stanga.png");
     SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/character_dreapta.png");
     vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left};
@@ -57,9 +60,26 @@ int main(int argc, char* args[]) {
     SDL_Texture* enemyTexture = window.loadTexture("src/res/images/explozie3.png");
     SDL_Texture* HPTexture = window.loadTexture("src/res/images/HP_ICON2.png");
 
+    
+
+    SDL_SetTextureBlendMode(backgroundTexture, SDL_BLENDMODE_BLEND);
+    // Example: To give a darker, night-time look
+    SDL_SetTextureColorMod(backgroundTexture, 128, 128, 128); // Adjust RGB values as needed
+    SDL_SetTextureAlphaMod(backgroundTexture, 230); // Adjust alpha value (0-255) as needed
+    SDL_Texture* fogTexture = window.loadTexture("src/res/images/fog.png");
+    SDL_SetTextureBlendMode(fogTexture, SDL_BLENDMODE_BLEND);
+    // For smoke
+    SDL_SetTextureColorMod(fogTexture, 128, 128, 128); // Darken for smoke effect
+
+
+
+    SDL_SetTextureAlphaMod(MainMenubackgroundTexture, 200);
+
+
     Background background(backgroundTexture, 1920, 1080);
-    SDL_SetTextureAlphaMod(backgroundTexture, 150);
-     int spawnInterval = 5; // Time in seconds between each enemy spawn
+    Background fog(fogTexture, 1920, 1080);
+    Background MainMenubackground(MainMenubackgroundTexture, 1920, 1080);
+    int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
 
     Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
@@ -106,23 +126,34 @@ int main(int argc, char* args[]) {
         switch (gameState) {
            case GameState::MainMenu: {
                 SDL_ShowCursor(SDL_ENABLE);
+                window.clear();
                 SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black background color
                 SDL_RenderClear(window.getRenderer());
 
                 // Display background
-                window.renderBackground(background);
+                window.renderBackground(MainMenubackground);
 
                 // Display "Play" button
-                SDL_Rect playButton = {WIDTH / 2 - 100, HEIGHT / 2, 200, 60}; // x, y, width, height
+                SDL_Rect playButton = {WIDTH / 8, HEIGHT / 2 + 200, 200, 60}; // x, y, width, height
                 SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black button color
                 SDL_RenderFillRect(window.getRenderer(), &playButton); // Fill button with solid color
 
+                // Display "Options" button
+                SDL_Rect optionsButton = {WIDTH / 8, HEIGHT / 2 + 280, 200, 60}; // x, y, width, height
+                SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black button color
+                SDL_RenderFillRect(window.getRenderer(), &optionsButton); // Fill button with solid color
+
                 // Draw button text
-                renderText.display("Play", playButton.x + 60, playButton.y + 5 , {255, 255, 255, 255}); // White text color, adjust text position as needed
+                renderText.display("Play", playButton.x + 60, playButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
+                renderText.display("Options", optionsButton.x + 30, optionsButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
+
 
                 // Draw button outline (optional)
                 SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
                 SDL_RenderDrawRect(window.getRenderer(), &playButton);
+                // Draw button outline (optional)
+                SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
+                SDL_RenderDrawRect(window.getRenderer(), &optionsButton);
 
                 SDL_RenderPresent(window.getRenderer());
 
@@ -136,7 +167,10 @@ int main(int argc, char* args[]) {
                         // Check if click is inside the play button
                         if (mouseX >= playButton.x && mouseX <= playButton.x + playButton.w &&
                             mouseY >= playButton.y && mouseY <= playButton.y + playButton.h) {
+                            SDL_ShowCursor(SDL_DISABLE);
+                            window.applyFadeEffect(window.getRenderer(), 0, 255, 200); // Fade out
                             gameState = GameState::Playing;
+                            fadeEffectApplied = false;  // Reset the fade effect flag
                             // Reset game elements for new game
                             player.reset_stats(); // Reset player stats and position
                             enemies.clear();
@@ -150,6 +184,12 @@ int main(int argc, char* args[]) {
 
             case GameState::Playing: {
                 SDL_ShowCursor(SDL_DISABLE);
+                window.clear();
+                if (!fadeEffectApplied) {
+                // Apply fade effect only once
+                window.applyFadeEffect(window.getRenderer(), 255, 0, 30); // Fade in
+                fadeEffectApplied = true;
+            }
                 int startTicks = SDL_GetTicks();
                 float newTime = utils::hireTimeInSeconds();
                 float frameTime = newTime - currentTime;
@@ -198,6 +238,7 @@ int main(int argc, char* args[]) {
                 window.clear();
 
                 window.renderBackground(background);
+                // window.renderBackground(fog);
 
                 spawnTimer -= frameTime;
 

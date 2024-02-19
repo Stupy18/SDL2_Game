@@ -24,7 +24,9 @@ public:
 		return window;
 	}
 
+	void applyFadeEffect(SDL_Renderer* renderer, int startAlpha, int endAlpha, int duration);
+
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-};
+	};
