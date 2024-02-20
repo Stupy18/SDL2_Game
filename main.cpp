@@ -58,7 +58,7 @@ int main(int argc, char* args[]) {
     SDL_Texture* explozieTexture1 = window.loadTexture("src/res/images/explozie.png");
     SDL_Texture* explozieTexture2 = window.loadTexture("src/res/images/explozie2.png");
     SDL_Texture* explozieTexture3 = window.loadTexture("src/res/images/explozie3.png");
-    SDL_Texture* enemyTexture = window.loadTexture("src/res/images/explozie3.png");
+    SDL_Texture* enemyTexture = window.loadTexture("src/res/images/enemy_atm.png");
     SDL_Texture* HPTexture = window.loadTexture("src/res/images/HP_ICON2.png");
 
     
@@ -263,6 +263,7 @@ int main(int argc, char* args[]) {
                     // Spawn a new enemy
                     Vector2f enemySpawnPos = utils::getRandomSpawnPositionOutsideScreen(WIDTH, HEIGHT);
                     Enemy enemy(enemySpawnPos, enemyTexture, 1.3f,3);
+                    enemy.setFrameSize(65,65,0,0);
                     enemies.emplace_back(enemy);
                 }
 
