@@ -36,6 +36,27 @@ void Player::handleInput(SDL_Event &event) {
              setTexture(tex[0]);
              break;
             }
+            case SDLK_1:{
+
+            if (getInventory().getItem_with_position(1).canUseSpell())
+             getInventory().getItem_with_position(1).useSpell(currentTime);
+            break;
+            }
+            case SDLK_2:{
+
+             getInventory().getItem_with_position(2).set_used();
+            break;
+            }
+            case SDLK_3:{
+
+             getInventory().getItem_with_position(3).set_used();
+            break;
+            }
+            case SDLK_4:{
+
+             getInventory().getItem_with_position(4).set_used();
+            break;
+            }
         }
     } else if (event.type == SDL_KEYUP) {
         switch (event.key.keysym.sym) {

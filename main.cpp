@@ -18,6 +18,8 @@ using namespace std;
 #include "Explozie.hpp"
 #include "Enemy.hpp"
 #include "RenderText.hpp"
+#include "Spell.hpp"
+#include "Inventory.hpp"
 
 enum class GameState {
     Playing,
@@ -60,6 +62,11 @@ int main(int argc, char* args[]) {
     SDL_Texture* explozieTexture3 = window.loadTexture("src/res/images/explozie3.png");
     SDL_Texture* enemyTexture = window.loadTexture("src/res/images/enemy_atm.png");
     SDL_Texture* HPTexture = window.loadTexture("src/res/images/HP_ICON2.png");
+    SDL_Texture* inventoryTexture = window.loadTexture("src/res/images/inventory_template.png");
+    SDL_Texture* Spell1Unused = window.loadTexture("src/res/images/Spell1_unused.png");
+    SDL_Texture* Spell1Used = window.loadTexture("src/res/images/Spell1_used.png");
+
+
 
     
 
@@ -78,7 +85,14 @@ int main(int argc, char* args[]) {
 
 
     Background background(backgroundTexture, 1920, 1080);
-    // Background fog(fogTexture, 1920, 1080);
+    Entity inventoryRender(Vector2f(1400,925),inventoryTexture);
+    Entity Spell_1_Unused(Vector2f(1400,925),Spell1Unused);
+    Entity Spell_1_Used(Vector2f(1400,925),Spell1Used);
+    inventoryRender.setFrameSize(450,200,0,0);
+    Spell_1_Unused.setFrameSize(450,200,0,0);
+    Spell_1_Used.setFrameSize(450,200,0,0);
+
+
     Background MainMenubackground(MainMenubackgroundTexture, 1920, 1080);
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
@@ -97,6 +111,7 @@ int main(int argc, char* args[]) {
     vector<Explosion> explosions;
     vector<SDL_Texture*> explosionTextures = {explozieTexture1, explozieTexture2, explozieTexture3};
     vector<Enemy> enemies;
+    Spell Spell1("2X",20,8.0f,1);
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),
@@ -186,7 +201,7 @@ int main(int argc, char* args[]) {
             case GameState::Loading: {
                         if (transitionToLoading) {
                             window.applyFadeEffect(window.getRenderer(), 0, 255, 30); // Fade to black
-                            renderText.display("Loading...", WIDTH / 2 -100, HEIGHT / 2, {255, 255, 255, 255});
+                            renderText.display("Loading...", WIDTH / 2 -135, HEIGHT / 2, {255, 255, 255, 255});
                             SDL_RenderPresent(window.getRenderer());
                             SDL_Delay(2000); // Hold the loading screen for a moment
                             window.applyFadeEffect(window.getRenderer(), 255, 0, 30); // Fade out
@@ -216,6 +231,9 @@ int main(int argc, char* args[]) {
                 player.updateReloadTimer(deltaTime);
 
                 accumulator += frameTime;
+
+                player.updateCurrentTime(utils::hireTimeInSeconds());
+
 
                 while (accumulator >= timeStep) {
                     while (SDL_PollEvent(&event)) {
@@ -250,7 +268,9 @@ int main(int argc, char* args[]) {
                 const float alpha = accumulator / timeStep;
                 window.clear();
 
+                Spell1.updateCooldown(currentTime);
                 window.renderBackground(background);
+                window.render(inventoryRender);
                 // window.renderBackground(fog);
 
                 spawnTimer -= frameTime;
@@ -340,6 +360,7 @@ int main(int argc, char* args[]) {
 
                 player.update(entities);
                 cursor.update();
+                
 
                 // Update bullets
                 for (auto& bullet : bullets) {
@@ -380,6 +401,11 @@ int main(int argc, char* args[]) {
                 }
 
                 window.render(HP);
+                if (Spell1.canUseSpell()) {
+                    window.render(Spell_1_Unused);
+                } else {
+                    window.render(Spell_1_Used);
+                }
                 SDL_Color textColor = {0, 0, 0, 0}; // Black color
                 SDL_Color textColorYellow = {255, 255, 0, 0}; // yellow color
                 SDL_Color textColorWhite = {255, 255, 255, 255}; // white color

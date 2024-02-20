@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.hpp"
+#include "Inventory.hpp"
 #include <vector>
 
 class Player : public Entity {
@@ -24,6 +25,8 @@ private:
     bool isEmpty;
     bool isReloading;
     float reloadTimer;
+    Inventory spellInventory;
+    float currentTime = 0.0f;
     
 
 public:
@@ -185,4 +188,22 @@ void reset_stats()
     set_totalAmmo(99);
     setIsEmpty(false);
 }
+
+    void addItemToInventory(const Spell& spell) {
+        spellInventory.addItem(spell);
+    }
+
+    void removeItemFromInventory(const std::string& spellName) {
+        spellInventory.removeItem(spellName);
+    }
+
+    // You might also want methods to check the inventory, get items, etc.
+    Inventory getInventory() const {
+        return spellInventory;
+    }
+
+    void updateCurrentTime(float newTime) {
+        currentTime = newTime;
+    }
+    
 };
