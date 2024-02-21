@@ -12,9 +12,13 @@ private:
     int position;
 
 public:
-    Spell(std::string name, int cost, float cooldown, int position);
+    Spell(std::string name, int cost, float cooldown, int position,float lastUsedTime);
 
     int get_cost() const;
+    float get_lastUsedTime()
+    {
+        return lastUsedTime;
+    }
     float get_cooldown() const;
     std::string get_name() const;
     bool was_used() const;

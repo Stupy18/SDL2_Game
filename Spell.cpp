@@ -1,7 +1,8 @@
 #include "Spell.hpp"
+#include <iostream>
 
-Spell::Spell(std::string name, int cost, float cooldown, int position)
-    : name(std::move(name)), cost(cost), cooldown(cooldown), lastUsedTime(0.0f), used(false), position(position) {}
+Spell::Spell(std::string name, int cost, float cooldown, int position, float lastUsedTime)
+    : name(std::move(name)), cost(cost), cooldown(cooldown), lastUsedTime(lastUsedTime), used(false), position(position) {}
 
 int Spell::get_cost() const {
     return cost;
@@ -31,8 +32,10 @@ void Spell::useSpell(float currentTime) {
     if (!used) {
         used = true;
         lastUsedTime = currentTime;
+        std::cout << "Spell used at time: " << lastUsedTime << std::endl;
     }
 }
+
 
 void Spell::updateCooldown(float currentTime) {
     if (used && (currentTime - lastUsedTime >= cooldown)) {

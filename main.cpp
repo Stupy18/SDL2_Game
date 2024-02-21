@@ -97,8 +97,6 @@ int main(int argc, char* args[]) {
     int spawnInterval = 5; // Time in seconds between each enemy spawn
     float spawnTimer = spawnInterval; // Timer starts at the interval
 
-    Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT);
-    player.setFrameSize(80, 80, 0, 0);
     SDL_ShowCursor(SDL_DISABLE);
 
     Cursor cursor({0, 0}, cursorTexture);
@@ -111,7 +109,12 @@ int main(int argc, char* args[]) {
     vector<Explosion> explosions;
     vector<SDL_Texture*> explosionTextures = {explozieTexture1, explozieTexture2, explozieTexture3};
     vector<Enemy> enemies;
-    Spell Spell1("2X",20,8.0f,1);
+    Spell Spell1("2X",20,8.0f,1,0.0f);
+    std::vector<Spell> spells;
+    Inventory spellInventory(spells);
+    spellInventory.addItem(Spell1);
+    Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory);
+    player.setFrameSize(80, 80, 0, 0);
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),
@@ -230,6 +233,7 @@ int main(int argc, char* args[]) {
                 // Update player's reload timer
                 player.updateReloadTimer(deltaTime);
 
+
                 accumulator += frameTime;
 
                 player.updateCurrentTime(utils::hireTimeInSeconds());
@@ -268,7 +272,16 @@ int main(int argc, char* args[]) {
                 const float alpha = accumulator / timeStep;
                 window.clear();
 
-                Spell1.updateCooldown(currentTime);
+                player.getInventory().getItem_with_position(1).updateCooldown(currentTime);
+
+                // std::cout<< "CurrentTime= " << currentTime << std::endl;
+                // std::cout<< "LastUsedTime= " << Spell1.get_lastUsedTime() << std::endl;
+                // std::cout<< "Cooldown= " << Spell1.get_cooldown() << std::endl;
+                // std::cout<< "Used= " << player.getInventory().getItem_with_position(1).was_used() << std::endl;
+                // std::cout<< "Cost= " << player.getInventory().getItem_with_position(1).get_cost() << std::endl;
+
+
+
                 window.renderBackground(background);
                 window.render(inventoryRender);
                 // window.renderBackground(fog);
@@ -401,7 +414,7 @@ int main(int argc, char* args[]) {
                 }
 
                 window.render(HP);
-                if (Spell1.canUseSpell()) {
+                if (player.getInventory().getItem_with_position(1).canUseSpell()) {
                     window.render(Spell_1_Unused);
                 } else {
                     window.render(Spell_1_Used);

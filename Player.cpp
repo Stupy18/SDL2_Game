@@ -2,11 +2,31 @@
 #include <vector>
 #include <iostream>
 
-Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight)
-    : Entity(p_pos, tex[0]), tex(tex), speed(p_speed), movingUp(false), movingDown(false), movingLeft(false), movingRight(false),
-      isJumping(false), jumpSpeed(6), originalYPos(p_pos.y), currentJumpHeight(0.0f),
-      screenWidth(screenWidth), screenHeight(screenHeight), gravitySpeed(4.0f) , damage(1.0f), health(100),  currentAmmo(6), totalAmmo(99), isEmpty(false){
+Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory)
+    : Entity(p_pos, tex[0]), 
+      tex(tex), 
+      speed(p_speed), 
+      movingUp(false), 
+      movingDown(false), 
+      movingLeft(false), 
+      movingRight(false),
+      isJumping(false), 
+      jumpSpeed(6), 
+      originalYPos(p_pos.y), 
+      currentJumpHeight(0.0f),
+      screenWidth(screenWidth), 
+      screenHeight(screenHeight), 
+      gravitySpeed(4.0f), 
+      damage(1.0f), 
+      health(100), 
+      currentAmmo(6), 
+      totalAmmo(99), 
+      isEmpty(false), 
+      spellInventory(spellInventory) // Use the member variable name here
+{
+    // Constructor body (if needed)
 }
+
 
 void Player::handleInput(SDL_Event &event) {
     if (event.type == SDL_KEYDOWN) {
@@ -36,15 +56,16 @@ void Player::handleInput(SDL_Event &event) {
              setTexture(tex[0]);
              break;
             }
-            case SDLK_1:{
-
-            if (getInventory().getItem_with_position(1).canUseSpell())
-             getInventory().getItem_with_position(1).useSpell(currentTime);
-            break;
+            case SDLK_1: {
+                Spell& spell = getInventory().getItem_with_position(1);
+                if (spell.canUseSpell()) {
+                    spell.useSpell(currentTime);
+                }
+                break;
             }
             case SDLK_2:{
 
-             getInventory().getItem_with_position(2).set_used();
+             getInventory().getItem_with_position(1).set_used();
             break;
             }
             case SDLK_3:{

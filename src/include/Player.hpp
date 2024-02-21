@@ -30,7 +30,7 @@ private:
     
 
 public:
-    Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight);
+    Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory);
     void handleInput(SDL_Event &event);  // Handle keyboard input
     void update(std::vector<Entity>& otherEntities);                       // Update player's position based on input and collision
     void render(SDL_Renderer* renderer); // Render the player
@@ -197,11 +197,10 @@ void reset_stats()
         spellInventory.removeItem(spellName);
     }
 
-    // You might also want methods to check the inventory, get items, etc.
-    Inventory getInventory() const {
+        // You might also want methods to check the inventory, get items, etc.
+    Inventory& getInventory() {
         return spellInventory;
     }
-
     void updateCurrentTime(float newTime) {
         currentTime = newTime;
     }
