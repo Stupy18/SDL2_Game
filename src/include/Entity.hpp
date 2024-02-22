@@ -34,8 +34,8 @@ public:
     std::vector<int> getCollisionPoints()
     {
         std::vector<int> points;
-        points.push_back(getPos().x);
-        points.push_back(getPos().x+get_currentFrame().w);
+        points.push_back(getPos().x-15);
+        points.push_back(getPos().x+get_currentFrame().w-50);
         points.push_back(getPos().y);
         points.push_back(getPos().y+get_currentFrame().h);
         return points;

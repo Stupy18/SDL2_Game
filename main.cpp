@@ -115,7 +115,7 @@ int main(int argc, char* args[]) {
     std::vector<Spell> spells;
     Inventory spellInventory(spells);
     spellInventory.addItem(Spell1);
-    Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory);
+    Player player(Vector2f(100, 650), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory);
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),

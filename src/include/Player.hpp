@@ -174,7 +174,7 @@ void setIsEmpty(bool p_isEmpty) {
 
 void reset_stats()
 {
-    setPos(100, 780); // Set starting position
+    setPos(100, 600); // Set starting position
     setSpeed(2.5); // Set speed
     setMovingUp(false);
     setMovingDown(false);

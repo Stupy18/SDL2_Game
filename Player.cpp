@@ -222,17 +222,25 @@ float Player::clamp(float p_value, float p_min, float p_max)
 }
 
 bool Player::checkCollision(std::vector<Entity>& entityVector) {
-    SDL_Rect playerRect = {int(getPos().x), int(getPos().y), get_currentFrame().w, get_currentFrame().h};
+    // Define the player's collision rectangle
+    SDL_Rect playerRect = {
+        int(getPos().x) , // Adjust the X position for the collision area
+        int(getPos().y) , // Adjust the Y position for the collision area
+        60, // The width of the collision area
+        120  // The height of the collision area
+    };
 
     for (Entity& entity : entityVector) {
         std::vector<int> collisionPoints = entity.getCollisionPoints();
-        SDL_Rect entityRect = {collisionPoints.at(0), collisionPoints.at(2), collisionPoints.at(1) - collisionPoints.at(0), collisionPoints.at(3) - collisionPoints.at(2)};
+        SDL_Rect entityRect = {
+            collisionPoints.at(0), 
+            collisionPoints.at(2), 
+            collisionPoints.at(1) - collisionPoints.at(0), 
+            collisionPoints.at(3) - collisionPoints.at(2)
+        };
 
-        if (playerRect.x < entityRect.x + entityRect.w &&
-            playerRect.x  + playerRect.w > entityRect.x &&
-            playerRect.y < entityRect.y + entityRect.h &&
-            playerRect.y + playerRect.h > entityRect.y) {
-            
+        // Check for intersection between playerRect and entityRect
+        if (SDL_HasIntersection(&playerRect, &entityRect)) {
             handleCollision(playerRect, entityRect);
             return true;
         }
@@ -246,10 +254,10 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     int overlapY = std::min(playerRect.y + playerRect.h, entityRect.y + entityRect.h) - std::max(playerRect.y, entityRect.y);
 
     // Determine the side of the collision based on the least amount of overlap
-    if (overlapX + 2 > overlapY) { // Collision is vertical
+    if (overlapX > overlapY) { // Collision is vertical
         if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
             // Collision on the top
-            setY(entityRect.y - playerRect.h + 1);
+            setY(entityRect.y - playerRect.h );
             onGround = true;
             isJumping = false;
             canDoubleJump = true; // Reset jump and double jump
@@ -276,7 +284,7 @@ void Player::reset()
     if (getPos().y>=screenHeight+300) {
 
     setX(100);
-	setY(700);
+	setY(600);
     health=health - 25;
     }
 }
