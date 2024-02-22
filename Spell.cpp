@@ -32,7 +32,6 @@ void Spell::useSpell(float currentTime) {
     if (!used) {
         used = true;
         lastUsedTime = currentTime;
-        std::cout << "Spell used at time: " << lastUsedTime << std::endl;
     }
 }
 

@@ -22,7 +22,11 @@ Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_spe
       currentAmmo(6), 
       totalAmmo(99), 
       isEmpty(false), 
-      spellInventory(spellInventory) // Use the member variable name here
+      spellInventory(spellInventory),
+      currentFrame(0),
+      frameDuration(0.1f), // assume each frame should last 0.1 seconds
+      frameTimer(0.0f),
+      isMoving(false)
 {
     // Constructor body (if needed)
 }
@@ -49,11 +53,17 @@ void Player::handleInput(SDL_Event &event) {
              movingDown = true;
              break;
             }
-            case SDLK_a: movingLeft = true; setTexture(tex[1]); break;
+            case SDLK_a: movingLeft = true; 
+            isMoving=true; 
+            setTexture(tex[1]);  
+            break;
+            facingRight=false;
             case SDLK_d:{
 
              movingRight = true; 
+             isMoving=true;
              setTexture(tex[0]);
+             facingRight=true;
              break;
             }
             case SDLK_1: {
@@ -84,17 +94,35 @@ void Player::handleInput(SDL_Event &event) {
             case SDLK_SPACE: 
                 // No need to handle space key on key up for jumping
                 break;
-            case SDLK_s: movingDown = false; break;
-            case SDLK_a: movingLeft = false; break;
-            case SDLK_d: movingRight = false; break;
+            case SDLK_s: movingDown = false; isMoving=false;  break;
+            case SDLK_a: movingLeft = false;  isMoving=false;  facingRight=false; break;
+            case SDLK_d: movingRight = false;  isMoving=false; facingRight=true; break;
         }
     }
 }
 
 
 
-void Player::update(std::vector<Entity>& otherEntities) {
+void Player::update(std::vector<Entity>& otherEntities, float deltaTime) {
     reset();
+    if (isMoving)
+    {
+    frameTimer += deltaTime;
+    }
+    else
+    {
+        frameTimer=0;
+        currentFrame=0;
+    }
+
+    
+    if (frameTimer >= frameDuration) {
+        frameTimer -= frameDuration;
+        currentFrame +=1 ; // Cycle through 8 frames
+    }
+
+
+    // Other update code, including movement which sets facingRight...
     Vector2f& pos = getPos();
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
 
@@ -130,7 +158,7 @@ void Player::update(std::vector<Entity>& otherEntities) {
     }
 
     // Clamp horizontal position
-    pos.x = clamp(pos.x, 0, screenWidth);
+    pos.x = clamp(pos.x, 0, screenWidth-50);
     // pos.y = clamp(pos.y, 0, screenHeight+200);
 }
 
@@ -139,11 +167,50 @@ void Player::update(std::vector<Entity>& otherEntities) {
 
 
 void Player::render(SDL_Renderer* renderer) {
-    SDL_Rect srcRect = get_currentFrame();
+    // Calculate the source rectangle based on the current frame
+    SDL_Rect srcRect;
+    int framesPerRow = 3;
+    int frameIndex = currentFrame % 8; // Use modulo 8 to cycle through 8 frames
+
+    if (movingLeft)
+    {
+        if (frameIndex==6)
+        {
+            frameIndex+=1;
+        }
+    }
+
+    // Adjust frameIndex to skip the 9th frame in the spritesheet
+    if (frameIndex == framesPerRow * (framesPerRow - 1) && movingRight) {
+        frameIndex --; // Go back to the 8th frame if the 9th frame is reached
+    }
+
+    // srcRect.x = frameIndex % framesPerRow * 120;
+    // srcRect.y = frameIndex / framesPerRow * 120;
+    // srcRect.w = 120; // Frame width
+    // srcRect.h = 120; // Frame height
+    setFrameSize(120,105,frameIndex % framesPerRow * 120,frameIndex / framesPerRow * 120);
+
+    
     const Vector2f& pos = getPos();  // Get a reference to the position
-    SDL_Rect dstRect = { (int)pos.x, (int)pos.y, srcRect.w, srcRect.h};
-    SDL_RenderCopy(renderer, get_Texture(), &srcRect, &dstRect);
+    SDL_Rect dstRect = { (int)pos.x, (int)pos.y, srcRect.w, srcRect.h };
+
+    // Determine which texture to use based on the direction the player is facing
+    SDL_Texture* currentTexture = movingRight ? tex[0] : tex[1];
+
+    if (facingRight && !isMoving)
+    {
+        setTexture(tex[2]);
+    }
+    else if(!isMoving)
+    {
+        setTexture(tex[3]);
+    }
+
+    // Perform the rendering
+    SDL_RenderCopy(renderer, currentTexture, &srcRect, &dstRect);
 }
+
 
 float Player::clamp(float p_value, float p_min, float p_max)
 {

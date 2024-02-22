@@ -43,7 +43,7 @@ int main(int argc, char* args[]) {
     }
 
     RenderWindow window("GAME v1.0", WIDTH, HEIGHT);
-    SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
     RenderText renderText(window.getRenderer(), "src/res/fonts/ccoverbyteoffregular.otf", 40);
 
@@ -52,9 +52,11 @@ int main(int argc, char* args[]) {
     SDL_Texture* diceTexture3 = window.loadTexture("src/res/images/dice_3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/casino_background.png");
     SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
-    SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_stanga.png");
-    SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/character_dreapta.png");
-    vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left};
+    SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/resized_left.png");
+    SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/resized_right.png");
+    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/idle_facing_left.png");
+    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/idle_facing_right.png");
+    vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left,playerTexture_idle_right,playerTexture_idle_left};
     SDL_Texture* cursorTexture = window.loadTexture("src/res/images/cursor.png");
     SDL_Texture* bulletTexture = window.loadTexture("src/res/images/bullet.png");
     SDL_Texture* explozieTexture1 = window.loadTexture("src/res/images/explozie.png");
@@ -114,7 +116,6 @@ int main(int argc, char* args[]) {
     Inventory spellInventory(spells);
     spellInventory.addItem(Spell1);
     Player player(Vector2f(100, 780), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory);
-    player.setFrameSize(80, 80, 0, 0);
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),
@@ -134,7 +135,7 @@ int main(int argc, char* args[]) {
 
                             };
 
-    GameState gameState = GameState::MainMenu;
+    GameState gameState = GameState::Playing;
     bool transitionToLoading = false;
     bool gameRunning = true;
     SDL_Event event;
@@ -237,6 +238,7 @@ int main(int argc, char* args[]) {
                 accumulator += frameTime;
 
                 player.updateCurrentTime(utils::hireTimeInSeconds());
+                player.render(window.getRenderer());
 
 
                 while (accumulator >= timeStep) {
@@ -274,17 +276,11 @@ int main(int argc, char* args[]) {
 
                 player.getInventory().getItem_with_position(1).updateCooldown(currentTime);
 
-                // std::cout<< "CurrentTime= " << currentTime << std::endl;
-                // std::cout<< "LastUsedTime= " << Spell1.get_lastUsedTime() << std::endl;
-                // std::cout<< "Cooldown= " << Spell1.get_cooldown() << std::endl;
-                // std::cout<< "Used= " << player.getInventory().getItem_with_position(1).was_used() << std::endl;
-                // std::cout<< "Cost= " << player.getInventory().getItem_with_position(1).get_cost() << std::endl;
 
 
 
                 window.renderBackground(background);
                 window.render(inventoryRender);
-                // window.renderBackground(fog);
 
                 spawnTimer -= frameTime;
 
@@ -371,7 +367,7 @@ int main(int argc, char* args[]) {
                 }
 
 
-                player.update(entities);
+                player.update(entities,deltaTime);
                 cursor.update();
                 
 

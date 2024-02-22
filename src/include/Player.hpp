@@ -26,13 +26,18 @@ private:
     bool isReloading;
     float reloadTimer;
     Inventory spellInventory;
-    float currentTime = 0.0f;
+    float currentTime ;
+    float frameTimer ; // Timer to track when to switch frames
+    float frameDuration ; // Duration each frame is displayed, for 8 fps use 0.125f
+    int currentFrame ; // Current frame of the animation
+    bool isMoving=false;
+    bool facingRight=true;
     
 
 public:
     Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory);
     void handleInput(SDL_Event &event);  // Handle keyboard input
-    void update(std::vector<Entity>& otherEntities);                       // Update player's position based on input and collision
+    void update(std::vector<Entity>& otherEntities,float deltaTime);                       // Update player's position based on input and collision
     void render(SDL_Renderer* renderer); // Render the player
 	int get_screenWidth(){
         return screenWidth;
@@ -204,5 +209,11 @@ void reset_stats()
     void updateCurrentTime(float newTime) {
         currentTime = newTime;
     }
+
+    SDL_Texture* get_Tex(int p_pos)
+    {
+        return tex.at(p_pos);
+    }
+
     
 };
