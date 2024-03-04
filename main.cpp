@@ -20,6 +20,7 @@ using namespace std;
 #include "RenderText.hpp"
 #include "Spell.hpp"
 #include "Inventory.hpp"
+#include "Weapon.hpp"
 
 enum class GameState {
     Playing,
@@ -67,6 +68,7 @@ int main(int argc, char* args[]) {
     SDL_Texture* inventoryTexture = window.loadTexture("src/res/images/inventory_template.png");
     SDL_Texture* Spell1Unused = window.loadTexture("src/res/images/Spell1_unused.png");
     SDL_Texture* Spell1Used = window.loadTexture("src/res/images/Spell1_used.png");
+    SDL_Texture* weaponTexture = window.loadTexture("src/res/images/weapon_1_resized.png");
 
 
 
@@ -107,6 +109,9 @@ int main(int argc, char* args[]) {
     Entity HP(Vector2f(20, 10), HPTexture);
     HP.setFrameSize(80, 80, 0, 0);
 
+    Weapon weapon(weaponTexture);
+
+
     vector<Bullet> bullets;
     vector<Explosion> explosions;
     vector<SDL_Texture*> explosionTextures = {explozieTexture1, explozieTexture2, explozieTexture3};
@@ -115,7 +120,7 @@ int main(int argc, char* args[]) {
     std::vector<Spell> spells;
     Inventory spellInventory(spells);
     spellInventory.addItem(Spell1);
-    Player player(Vector2f(100, 650), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory);
+    Player player(Vector2f(100, 650), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory,weaponTexture);
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),
@@ -319,6 +324,9 @@ int main(int argc, char* args[]) {
 
                 SDL_Rect playerRect = {abs(int(player.getPos().x)), abs(int(player.getPos().y)+50), player.get_currentFrame().w-40, player.get_currentFrame().h-10};
 
+        
+
+
                 for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();) {
                     SDL_Rect enemyRect = {
                         static_cast<int>(enemyIt->getPos().x),
@@ -419,6 +427,21 @@ int main(int argc, char* args[]) {
 
                 window.render(player);
                 window.render(cursor);
+                //   if (player.isFacingRight())
+                // {
+                //     // weapon.setPos(player.getPos().x,player.getPos().y);
+                //     weapon.updatePosition(Vector2f(player.getPos().x,player.getPos().y),cursor.getPos(),player.isFacingRight());
+                //     window.render(weapon);
+                // }
+                // else 
+                // {
+                //     // weapon.setPos(player.getPos().x,player.getPos().y);
+                //     weapon.updatePosition(Vector2f(player.getPos().x,player.getPos().y),cursor.getPos(),player.isFacingRight());
+                //     window.render_flipped(weapon);
+                // }
+
+                weapon.updatePositionAndRotation(player.getPos(), cursor.getPos());
+                window.renderWeapon(weapon);
 
                 // Render bullets
                 for (auto& bullet : bullets) {

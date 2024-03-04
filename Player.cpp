@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory)
+Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory, SDL_Texture* weaponTexture)
     : Entity(p_pos, tex[0]), 
       tex(tex), 
       speed(p_speed), 
@@ -195,6 +195,8 @@ void Player::render(SDL_Renderer* renderer) {
 
     // Perform the rendering
     SDL_RenderCopy(renderer, currentTexture, &srcRect, &dstRect);
+
+    
 }
 
 

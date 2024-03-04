@@ -11,6 +11,7 @@ private:
     Vector2f pos;
     SDL_Rect currentFrame;
     SDL_Texture* texture;
+    float rotation; // Add rotation attribute
 
 public:
     Entity(Vector2f p_pos, SDL_Texture* p_texture);
@@ -72,4 +73,7 @@ public:
         return texture;
     }
     bool checkCollision(const SDL_Rect& otherRect) const;
+
+    float getRotation() const; // Add getter for rotation
+    void setRotation(float newRotation); // Add setter for rotation
 };

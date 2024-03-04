@@ -41,3 +41,11 @@ bool Entity::checkCollision(const SDL_Rect& otherRect) const {
     return true; // Collision
 }
 
+float Entity::getRotation() const {
+    return rotation;
+}
+
+void Entity::setRotation(float newRotation) {
+    rotation = newRotation;
+}
+

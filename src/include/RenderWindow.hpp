@@ -12,6 +12,8 @@ public:
 	SDL_Texture* loadTexture(const char* p_filePath);
 	void clear();
 	void render(Entity& p_entity);
+	void render_flipped(Entity& p_entity);
+	void renderWeapon(Entity& p_entity);
 	void renderBackground(Background& p_entity);
 	void display();
 	int getRefreshRate();

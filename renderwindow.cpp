@@ -1,3 +1,4 @@
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -56,6 +57,45 @@ void RenderWindow::render(Entity& p_entity)
 
     SDL_RenderCopy(renderer, p_entity.get_Texture(), &src, &destination);
 }
+
+void RenderWindow::render_flipped(Entity& p_entity)
+{
+    SDL_Rect src;
+    src.x = p_entity.get_currentFrame().x;
+    src.y = p_entity.get_currentFrame().y;
+    src.w = p_entity.get_currentFrame().w;
+    src.h = p_entity.get_currentFrame().h;
+
+    SDL_Rect destination;
+    destination.x = p_entity.getPos().x;
+    destination.y = p_entity.getPos().y;
+    destination.w = p_entity.get_currentFrame().w;
+    destination.h = p_entity.get_currentFrame().h;
+
+    // Use SDL_RenderCopyEx for flipping
+    SDL_RenderCopyEx(renderer, p_entity.get_Texture(), &src, &destination, 0, NULL, SDL_FLIP_HORIZONTAL);
+}
+
+void RenderWindow::renderWeapon( Entity& p_entity) {
+    SDL_Rect src;
+    src.x = p_entity.get_currentFrame().x;
+    src.y = p_entity.get_currentFrame().y;
+    src.w = p_entity.get_currentFrame().w;
+    src.h = p_entity.get_currentFrame().h;
+
+    SDL_Rect destination;
+    destination.x = p_entity.getPos().x;
+    destination.y = p_entity.getPos().y;
+    destination.w = p_entity.get_currentFrame().w;
+    destination.h = p_entity.get_currentFrame().h;
+
+    // Assuming getAngle returns the angle in degrees and the rotation center is the middle of the texture
+    SDL_Point center = {destination.w / 2, destination.h / 2};
+
+    // Use SDL_RenderCopyEx for rendering with rotation
+    SDL_RenderCopyEx(renderer, p_entity.get_Texture(), &src, &destination, p_entity.getRotation(), &center, SDL_FLIP_NONE);
+}
+
 
 void RenderWindow::renderBackground(Background& p_entity)
 {

@@ -32,10 +32,12 @@ private:
     int currentFrame ; // Current frame of the animation
     bool isMoving=false;
     bool facingRight=true;
+    SDL_Texture* weaponTexture; // Add this
+    SDL_Point weaponOffsetHolding{10, -20};
     
 
 public:
-    Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory);
+    Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_speed, int screenWidth, int screenHeight, Inventory spellInventory,SDL_Texture* weaponTexture);
     void handleInput(SDL_Event &event);  // Handle keyboard input
     void update(std::vector<Entity>& otherEntities,float deltaTime);                       // Update player's position based on input and collision
     void render(SDL_Renderer* renderer); // Render the player
@@ -213,6 +215,11 @@ void reset_stats()
     SDL_Texture* get_Tex(int p_pos)
     {
         return tex.at(p_pos);
+    }
+
+    bool isFacingRight()
+    {
+        return facingRight;
     }
 
     
