@@ -43,7 +43,7 @@ int main(int argc, char* args[]) {
     }
 
     RenderWindow window("GAME v1.0", WIDTH, HEIGHT);
-    // SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
+    SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
     RenderText renderText(window.getRenderer(), "src/res/fonts/ccoverbyteoffregular.otf", 40);
 
@@ -54,8 +54,8 @@ int main(int argc, char* args[]) {
     SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
     SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/resized_left.png");
     SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/resized_right.png");
-    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/idle_facing_left.png");
-    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/idle_facing_right.png");
+    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/idle_left.png");
+    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/idle_right.png");
     vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left,playerTexture_idle_right,playerTexture_idle_left};
     SDL_Texture* cursorTexture = window.loadTexture("src/res/images/cursor.png");
     SDL_Texture* bulletTexture = window.loadTexture("src/res/images/bullet.png");
@@ -135,7 +135,7 @@ int main(int argc, char* args[]) {
 
                             };
 
-    GameState gameState = GameState::Playing;
+    GameState gameState = GameState::MainMenu;
     bool transitionToLoading = false;
     bool gameRunning = true;
     SDL_Event event;
@@ -164,9 +164,15 @@ int main(int argc, char* args[]) {
                 SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black button color
                 SDL_RenderFillRect(window.getRenderer(), &optionsButton); // Fill button with solid color
 
+                // Display "Quit" button
+                SDL_Rect quitButton = {WIDTH / 8, HEIGHT / 2 + 360, 200, 60}; // x, y, width, height
+                SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255); // Black button color
+                SDL_RenderFillRect(window.getRenderer(), &quitButton); // Fill button with solid color
+
                 // Draw button text
                 renderText.display("Play", playButton.x + 60, playButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
                 renderText.display("Options", optionsButton.x + 30, optionsButton.y + 7 , {255, 255, 255, 255}); // White text color, adjust text position as needed
+                renderText.display("Quit", quitButton.x + 60, quitButton.y + 7 , {255, 255, 255, 255});
 
                 // Draw button outline (optional)
                 SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
@@ -174,6 +180,9 @@ int main(int argc, char* args[]) {
                 // Draw button outline (optional)
                 SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
                 SDL_RenderDrawRect(window.getRenderer(), &optionsButton);
+                // Draw button outline (optional)
+                SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255); // White outline color
+                SDL_RenderDrawRect(window.getRenderer(), &quitButton);
 
                 SDL_RenderPresent(window.getRenderer());
 
@@ -198,6 +207,13 @@ int main(int argc, char* args[]) {
                             bullets.clear();
                             explosions.clear();
                         }
+                        // Check if click is inside the play button
+                        if (mouseX >= quitButton.x && mouseX <= quitButton.x + quitButton.w &&
+                            mouseY >= quitButton.y && mouseY <= quitButton.y + quitButton.h) {
+                                window.cleanUp();
+                                SDL_Quit();
+                                return 0;
+                            }
                     }
                 }
                 break;
@@ -205,7 +221,7 @@ int main(int argc, char* args[]) {
             case GameState::Loading: {
                         if (transitionToLoading) {
                             window.applyFadeEffect(window.getRenderer(), 0, 255, 30); // Fade to black
-                            renderText.display("Loading...", WIDTH / 2 -135, HEIGHT / 2, {255, 255, 255, 255});
+                            renderText.display("Loading...", WIDTH / 2 -105, HEIGHT / 2, {255, 255, 255, 255});
                             SDL_RenderPresent(window.getRenderer());
                             SDL_Delay(2000); // Hold the loading screen for a moment
                             window.applyFadeEffect(window.getRenderer(), 255, 0, 30); // Fade out

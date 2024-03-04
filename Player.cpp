@@ -105,15 +105,8 @@ void Player::handleInput(SDL_Event &event) {
 
 void Player::update(std::vector<Entity>& otherEntities, float deltaTime) {
     reset();
-    if (isMoving)
-    {
+    
     frameTimer += deltaTime;
-    }
-    else
-    {
-        frameTimer=0;
-        currentFrame=0;
-    }
 
     
     if (frameTimer >= frameDuration) {
@@ -172,13 +165,6 @@ void Player::render(SDL_Renderer* renderer) {
     int framesPerRow = 3;
     int frameIndex = currentFrame % 8; // Use modulo 8 to cycle through 8 frames
 
-    if (movingLeft)
-    {
-        if (frameIndex==6)
-        {
-            frameIndex+=1;
-        }
-    }
 
     // Adjust frameIndex to skip the 9th frame in the spritesheet
     if (frameIndex == framesPerRow * (framesPerRow - 1) && movingRight) {
@@ -254,10 +240,10 @@ void Player::handleCollision(const SDL_Rect& playerRect, const SDL_Rect& entityR
     int overlapY = std::min(playerRect.y + playerRect.h, entityRect.y + entityRect.h) - std::max(playerRect.y, entityRect.y);
 
     // Determine the side of the collision based on the least amount of overlap
-    if (overlapX > overlapY) { // Collision is vertical
+    if (overlapX + 2 > overlapY) { // Collision is vertical
         if (playerRect.y + playerRect.h - overlapY == entityRect.y) {
             // Collision on the top
-            setY(entityRect.y - playerRect.h );
+            setY(entityRect.y - playerRect.h + 1 );
             onGround = true;
             isJumping = false;
             canDoubleJump = true; // Reset jump and double jump
