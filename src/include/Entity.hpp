@@ -12,6 +12,7 @@ private:
     SDL_Rect currentFrame;
     SDL_Texture* texture;
     float rotation; // Add rotation attribute
+    bool flipped;
 
 public:
     Entity(Vector2f p_pos, SDL_Texture* p_texture);
@@ -76,4 +77,9 @@ public:
 
     float getRotation() const; // Add getter for rotation
     void setRotation(float newRotation); // Add setter for rotation
+    // Method to set the flip state
+    void setFlip(bool shouldFlip);
+
+    // Method to get the current flip state
+    bool isFlipped() const;
 };

@@ -93,7 +93,8 @@ void RenderWindow::renderWeapon( Entity& p_entity) {
     SDL_Point center = {destination.w / 2, destination.h / 2};
 
     // Use SDL_RenderCopyEx for rendering with rotation
-    SDL_RenderCopyEx(renderer, p_entity.get_Texture(), &src, &destination, p_entity.getRotation(), &center, SDL_FLIP_NONE);
+    SDL_RendererFlip flip = p_entity.isFlipped() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    SDL_RenderCopyEx(renderer, p_entity.get_Texture(), &src, &destination, p_entity.getRotation(), &center, flip);
 }
 
 

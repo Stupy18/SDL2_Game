@@ -222,5 +222,19 @@ void reset_stats()
         return facingRight;
     }
 
+    void setFacingRight()
+    {
+        facingRight=true;
+    }
+
+    void setFacingLeft()
+    {
+        facingRight=false;
+    }
+
+    bool isStandingStill()
+    {
+        return !isMoving;
+    }
     
 };

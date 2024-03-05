@@ -140,7 +140,7 @@ int main(int argc, char* args[]) {
 
                             };
 
-    GameState gameState = GameState::MainMenu;
+    GameState gameState = GameState::Playing;
     bool transitionToLoading = false;
     bool gameRunning = true;
     SDL_Event event;
@@ -440,7 +440,7 @@ int main(int argc, char* args[]) {
                 //     window.render_flipped(weapon);
                 // }
 
-                weapon.updatePositionAndRotation(player.getPos(), cursor.getPos());
+                weapon.updatePositionAndRotation(player.getPos(), cursor.getPos(),player);
                 window.renderWeapon(weapon);
 
                 // Render bullets

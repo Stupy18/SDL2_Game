@@ -49,3 +49,12 @@ void Entity::setRotation(float newRotation) {
     rotation = newRotation;
 }
 
+// Implement the setFlip method
+void Entity::setFlip(bool shouldFlip) {
+    flipped = shouldFlip;
+}
+
+// Implement the isFlipped method
+bool Entity::isFlipped() const {
+    return flipped;
+}
