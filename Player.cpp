@@ -107,12 +107,13 @@ void Player::update(std::vector<Entity>& otherEntities, float deltaTime) {
     reset();
     
     frameTimer += deltaTime;
+    // std::cout <<"DeltaTime= " << deltaTime << std::endl;
 
-    
-    if (frameTimer >= frameDuration) {
-        frameTimer -= frameDuration;
-        currentFrame +=1 ; // Cycle through 8 frames
-    }
+        if (frameTimer >= frameDuration) {
+            frameTimer -= frameDuration;
+            currentFrame = (currentFrame + 1) % 9; // Cycle through 9 frames and loop back to 0
+        }
+
 
 
     // Other update code, including movement which sets facingRight...
@@ -163,19 +164,13 @@ void Player::render(SDL_Renderer* renderer) {
     // Calculate the source rectangle based on the current frame
     SDL_Rect srcRect;
     int framesPerRow = 3;
-    int frameIndex = currentFrame % 8; // Use modulo 8 to cycle through 8 frames
+    int frameIndex = currentFrame % 9; 
 
-
-    // Adjust frameIndex to skip the 9th frame in the spritesheet
-    if (frameIndex == framesPerRow * (framesPerRow - 1) && movingRight) {
-        frameIndex --; // Go back to the 8th frame if the 9th frame is reached
-    }
-
-    // srcRect.x = frameIndex % framesPerRow * 120;
-    // srcRect.y = frameIndex / framesPerRow * 120;
-    // srcRect.w = 120; // Frame width
-    // srcRect.h = 120; // Frame height
-    setFrameSize(120,105,frameIndex % framesPerRow * 120,frameIndex / framesPerRow * 120);
+    srcRect.x = frameIndex % framesPerRow * 120;
+    srcRect.y = frameIndex / framesPerRow * 120;
+    srcRect.w = 120; // Frame width
+    srcRect.h = 120; // Frame height
+    setFrameSize(srcRect.w,srcRect.h,srcRect.x,srcRect.y);
 
     
     const Vector2f& pos = getPos();  // Get a reference to the position
@@ -187,10 +182,12 @@ void Player::render(SDL_Renderer* renderer) {
     if (facingRight && !isMoving)
     {
         setTexture(tex[2]);
+        // std::cout <<"Facing Right: " << frameIndex <<std::endl;
     }
     else if(!isMoving)
     {
         setTexture(tex[3]);
+        // std::cout << "Facing Left: " <<frameIndex <<std::endl;
     }
 
     // Perform the rendering

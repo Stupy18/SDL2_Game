@@ -55,8 +55,8 @@ int main(int argc, char* args[]) {
     SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
     SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/resized_left.png");
     SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/resized_right.png");
-    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/idle_left.png");
-    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/idle_right.png");
+    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/character_movement/idle_resized_left.png");
+    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/character_movement/idle_resized_right.png");
     vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left,playerTexture_idle_right,playerTexture_idle_left};
     SDL_Texture* cursorTexture = window.loadTexture("src/res/images/cursor.png");
     SDL_Texture* bulletTexture = window.loadTexture("src/res/images/bullet.png");
@@ -427,18 +427,6 @@ int main(int argc, char* args[]) {
 
                 window.render(player);
                 window.render(cursor);
-                //   if (player.isFacingRight())
-                // {
-                //     // weapon.setPos(player.getPos().x,player.getPos().y);
-                //     weapon.updatePosition(Vector2f(player.getPos().x,player.getPos().y),cursor.getPos(),player.isFacingRight());
-                //     window.render(weapon);
-                // }
-                // else 
-                // {
-                //     // weapon.setPos(player.getPos().x,player.getPos().y);
-                //     weapon.updatePosition(Vector2f(player.getPos().x,player.getPos().y),cursor.getPos(),player.isFacingRight());
-                //     window.render_flipped(weapon);
-                // }
 
                 weapon.updatePositionAndRotation(player.getPos(), cursor.getPos(),player);
                 window.renderWeapon(weapon);
