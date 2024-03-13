@@ -44,7 +44,7 @@ int main(int argc, char* args[]) {
     }
 
     RenderWindow window("GAME v1.0", WIDTH, HEIGHT);
-    SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN);
     int windowRefreshRate = window.getRefreshRate();
     RenderText renderText(window.getRenderer(), "src/res/fonts/ccoverbyteoffregular.otf", 40);
 
@@ -53,10 +53,10 @@ int main(int argc, char* args[]) {
     SDL_Texture* diceTexture3 = window.loadTexture("src/res/images/dice_3.png");
     SDL_Texture* backgroundTexture = window.loadTexture("src/res/images/casino_background.png");
     SDL_Texture* MainMenubackgroundTexture = window.loadTexture("src/res/images/MainMenu_background.png");
-    SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/resized_left.png");
-    SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/resized_right.png");
-    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/character_movement/idle_resized_left.png");
-    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/character_movement/idle_resized_right.png");
+    SDL_Texture* playerTexture_left = window.loadTexture("src/res/images/character_movement/resized_running_left.png");
+    SDL_Texture* playerTexture_right = window.loadTexture("src/res/images/character_movement/resized_running_right.png");
+    SDL_Texture* playerTexture_idle_left = window.loadTexture("src/res/images/character_movement/resized_idle_left_3.png");
+    SDL_Texture* playerTexture_idle_right = window.loadTexture("src/res/images/character_movement/resized_idle_right_3.png");
     vector<SDL_Texture*> playerTextures = {playerTexture_right, playerTexture_left,playerTexture_idle_right,playerTexture_idle_left};
     SDL_Texture* cursorTexture = window.loadTexture("src/res/images/cursor.png");
     SDL_Texture* bulletTexture = window.loadTexture("src/res/images/bullet.png");
@@ -120,7 +120,8 @@ int main(int argc, char* args[]) {
     std::vector<Spell> spells;
     Inventory spellInventory(spells);
     spellInventory.addItem(Spell1);
-    Player player(Vector2f(100, 650), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory,weaponTexture);
+    Player player(Vector2f(650, 650), playerTextures, 2.5, WIDTH, HEIGHT,spellInventory,weaponTexture);
+
 
  std::vector<Entity> entities = {
                             Entity(Vector2f(0,800),diceTexture1),
@@ -140,7 +141,7 @@ int main(int argc, char* args[]) {
 
                             };
 
-    GameState gameState = GameState::Playing;
+    GameState gameState = GameState::MainMenu;
     bool transitionToLoading = false;
     bool gameRunning = true;
     SDL_Event event;

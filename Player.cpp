@@ -26,7 +26,8 @@ Player::Player(Vector2f p_pos, const std::vector<SDL_Texture*>& tex, float p_spe
       currentFrame(0),
       frameDuration(0.1f), // assume each frame should last 0.1 seconds
       frameTimer(0.0f),
-      isMoving(false)
+      isMoving(false),
+      lastXPos(p_pos.x)
 {
     // Constructor body (if needed)
 }
@@ -111,14 +112,28 @@ void Player::update(std::vector<Entity>& otherEntities, float deltaTime) {
 
         if (frameTimer >= frameDuration) {
             frameTimer -= frameDuration;
-            currentFrame = (currentFrame + 1) % 9; // Cycle through 9 frames and loop back to 0
+            currentFrame = (currentFrame + 1) % 9; // Cycle through 8/9 frames and loop back to 0
         }
+
 
 
 
     // Other update code, including movement which sets facingRight...
     Vector2f& pos = getPos();
     SDL_Rect playerRect = {int(pos.x), int(pos.y), get_currentFrame().w, get_currentFrame().h};
+
+    // // Determine facing direction based on x-coordinate movement
+    // if (pos.x > lastXPos) {
+    //     // Moving right
+    //     facingRight = true;
+    //     isMoving = true;
+    // } else if (pos.x < lastXPos) {
+    //     // Moving left
+    //     facingRight = false;
+    //     isMoving = true;
+    // }
+    // // Update lastXPos for the next frame
+    // lastXPos = pos.x;
 
     // Apply gravity
     if (!isJumping || (isJumping && currentJumpHeight >= get_currentFrame().h*2)) {
@@ -174,7 +189,7 @@ void Player::render(SDL_Renderer* renderer) {
 
     
     const Vector2f& pos = getPos();  // Get a reference to the position
-    SDL_Rect dstRect = { (int)pos.x, (int)pos.y, srcRect.w, srcRect.h };
+    SDL_Rect dstRect = { (int)pos.x, (int)pos.y , srcRect.w, srcRect.h };
 
     // Determine which texture to use based on the direction the player is facing
     SDL_Texture* currentTexture = movingRight ? tex[0] : tex[1];
@@ -189,6 +204,7 @@ void Player::render(SDL_Renderer* renderer) {
         setTexture(tex[3]);
         // std::cout << "Facing Left: " <<frameIndex <<std::endl;
     }
+
 
     // Perform the rendering
     SDL_RenderCopy(renderer, currentTexture, &srcRect, &dstRect);

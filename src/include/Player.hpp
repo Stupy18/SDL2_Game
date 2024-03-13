@@ -34,6 +34,8 @@ private:
     bool facingRight=true;
     SDL_Texture* weaponTexture; // Add this
     SDL_Point weaponOffsetHolding{10, -20};
+    float lastXPos;
+
     
 
 public:
